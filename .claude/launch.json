@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "civic-os",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5599", "--directory", "C:\\Users\\azzay\\OneDrive\\Desktop\\civic-os"],
+      "port": 5599
+    }
+  ]
+}

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>CivicOS — Сонгуулийн штабын ухаалаг хяналтын систем</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%237c5cff'/><text x='16' y='23' font-size='18' text-anchor='middle' fill='white' font-family='sans-serif'>C</text></svg>">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+
+<!-- ══════════════ НЭВТРЭХ ══════════════ -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="brand">
+      <div class="logo-mark">◈</div>
+      <div>
+        <h1>CivicOS</h1>
+        <p class="sub">Сонгуулийн штабын хяналтын систем</p>
+      </div>
+    </div>
+    <label>Нэвтрэх нэр / И-мэйл</label>
+    <input id="gu" type="text" autocomplete="username" placeholder="admin">
+    <label>Нууц үг</label>
+    <input id="gp" type="password" autocomplete="current-password" placeholder="••••••••">
+    <button class="gate-btn" id="gbtn">Нэвтрэх</button>
+    <div class="gate-err" id="gerr"></div>
+    <div class="gate-hint">
+      Энэ систем нь <b>хязгаарлагдмал хандалттай</b>. Мэдээлэл нь хувь хүний нууцад хамаарна —
+      линк болон нууц үгээ гуравдагч этгээдэд бүү дамжуул.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ҮНДСЭН ══════════════ -->
+<div id="app" class="hide">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <div class="logo-mark">◈</div>
+      <div class="logo-txt"><b>CivicOS</b><span>Штабын систем</span></div>
+    </div>
+    <nav class="nav">
+      <div class="nav-item active" data-page="dashboard"><span class="ic">▦</span> Хяналтын самбар</div>
+      <div class="nav-item" data-page="map"><span class="ic">🗺</span> Газрын зураг</div>
+
+      <div class="nav-sec">Дата сан</div>
+      <div class="nav-item" data-page="households"><span class="ic">🏠</span> Өрхийн бүртгэл <span class="badge" id="bdg-hh">0</span></div>
+      <div class="nav-item" data-page="citizens"><span class="ic">👥</span> Иргэд <span class="badge" id="bdg-ct">0</span></div>
+      <div class="nav-item" data-page="programs"><span class="ic">◎</span> Төсөл хөтөлбөр</div>
+      <div class="nav-item" data-page="issues"><span class="ic">⚑</span> Санал гомдол <span class="badge" id="bdg-is">0</span></div>
+
+      <div class="nav-sec">Хиймэл оюун</div>
+      <div class="nav-item" data-page="ai"><span class="ic">✦</span> Дэмжлэгийн шинжилгээ</div>
+      <div class="nav-item" data-page="strategy"><span class="ic">◈</span> Хорооны стратеги</div>
+
+      <div class="nav-sec">Багийн хяналт</div>
+      <div class="nav-item" data-page="team"><span class="ic">📣</span> Багийн гүйцэтгэл <span class="badge" id="bdg-st">0</span></div>
+      <div class="nav-item" data-page="tasks"><span class="ic">✓</span> Даалгавар <span class="badge" id="bdg-tk">0</span></div>
+
+      <div class="nav-sec">Систем</div>
+      <div class="nav-item" data-page="io"><span class="ic">⇅</span> Импорт / Экспорт</div>
+      <div class="nav-item" data-page="settings"><span class="ic">⚙</span> Тохиргоо</div>
+    </nav>
+    <div class="userbox">
+      <div class="avatar" id="uav">АД</div>
+      <div>
+        <div class="nm" id="unm">Админ</div>
+        <div class="rl" id="url">Штабын дарга</div>
+      </div>
+      <button class="out" id="ulogout" title="Гарах">⏻</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main" id="main">
+
+    <!-- ─────── ХЯНАЛТЫН САМБАР ─────── -->
+    <section class="page active" data-page="dashboard">
+      <div class="topbar">
+        <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
+        <div>
+          <h1>Хяналтын самбар</h1>
+          <div class="sub">Тойргийн ерөнхий байдал, дэмжлэгийн урьдчилсан тооцоо</div>
+        </div>
+        <div class="topbar-right">
+          <div class="search">
+            <span style="color:var(--text-mute)">⌕</span>
+            <input id="globalSearch" placeholder="Өрх, иргэн, хаяг, утас хайх...">
+          </div>
+          <select class="inp" id="dashScope"><option value="">Бүх дүүрэг</option></select>
+        </div>
+      </div>
+      <div class="kpis" id="dashKpis"></div>
+      <div class="grid g-21">
+        <div class="card">
+          <div class="card-h">
+            <div><h3>Холбоо барилт & эерэг хариу</h3><div class="sub">Сүүлийн 12 сар</div></div>
+          </div>
+          <div id="trendChart"></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Дэмжлэгийн бүтэц</h3></div>
+          <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+            <div id="supDonut"></div>
+            <div class="legend" id="supLegend" style="flex:1"></div>
+          </div>
+        </div>
+      </div>
+      <div class="grid g-12">
+        <div class="card">
+          <div class="card-h"><h3>Дүүргийн харьцуулалт</h3><div class="r">
+            <select class="inp sm" id="distMetric" style="padding:6px 26px 6px 10px;font-size:12px">
+              <option value="supportRate">Дэмжлэгийн хувь</option>
+              <option value="avgProb">AI магадлал</option>
+              <option value="coverage">Хамрагдалт</option>
+              <option value="households">Өрхийн тоо</option>
+            </select></div>
+          </div>
+          <div id="distBars"></div>
+        </div>
+        <div class="card">
+          <div class="card-h">
+            <div><h3>✦ AI тэргүүлэх зорилтот өрхүүд</h3><div class="sub">Хөрвүүлэх өгөөж хамгийн өндөр</div></div>
+            <div class="r"><button class="btn sm" onclick="CivicUI.go('ai')">Бүгдийг харах</button></div>
+          </div>
+          <div id="dashPriority"></div>
+        </div>
+      </div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-h"><div><h3>Багийн 30 хоногийн гүйцэтгэл</h3><div class="sub">Ухуулагч тус бүрээр</div></div>
+            <div class="r"><button class="btn sm" onclick="CivicUI.go('team')">Дэлгэрэнгүй</button></div></div>
+          <div class="tbl-wrap"><table class="tbl" id="dashTeam"></table></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><div><h3>Даалгаврын байдал</h3><div class="sub">Штабын одоогийн ачаалал</div></div>
+            <div class="r"><button class="btn sm" onclick="CivicUI.go('tasks')">Дэлгэрэнгүй</button></div></div>
+          <div class="mini" id="taskMini" style="margin-bottom:18px"></div>
+          <div id="taskBars"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <div class="card-h"><div><h3>✦ Автомат дүгнэлт</h3><div class="sub">Одоогийн дата дээр үндэслэсэн штабын товч</div></div></div>
+        <div id="dashBrief"></div>
+      </div>
+    </section>
+
+    <!-- ─────── ГАЗРЫН ЗУРАГ ─────── -->
+    <section class="page full" data-page="map">
+      <div class="mapshell">
+        <div class="mappanel">
+          <div class="ph">
+            <button class="hamb" onclick="CivicUI.toggleSidebar()" style="margin-bottom:8px">☰</button>
+            <h2>Газрын зураг</h2>
+            <p>Дүүрэг · хороо · гудамж · өрх</p>
+          </div>
+          <div class="mapfilters">
+            <div class="field"><label class="fl">Хайх</label>
+              <input class="inp" id="mapQ" placeholder="Хаяг, нэр, утас..."></div>
+            <div class="field"><label class="fl">Дүүрэг</label>
+              <select class="inp" id="mapDist"><option value="">Бүгд</option></select></div>
+            <div class="field"><label class="fl">Хороо</label>
+              <select class="inp" id="mapKhoroo"><option value="">Бүгд</option></select></div>
+            <div class="field"><label class="fl">Гудамж / хэсэг</label>
+              <select class="inp" id="mapStreet"><option value="">Бүгд</option></select></div>
+            <div class="field"><label class="fl">Дэмжлэгийн түвшин</label>
+              <select class="inp" id="mapSup"><option value="">Бүгд</option></select></div>
+            <div class="field"><label class="fl">Хариуцсан ухуулагч</label>
+              <select class="inp" id="mapStaff"><option value="">Бүгд</option></select></div>
+            <div class="field"><label class="fl">Хөтөлбөрийн оролцоо</label>
+              <select class="inp" id="mapProg"><option value="">Бүгд</option></select></div>
+            <div class="field"><label class="fl">AI магадлал ≥ <b id="mapProbV">0%</b></label>
+              <input type="range" id="mapProb" min="0" max="100" value="0" style="width:100%"></div>
+            <div class="chips" style="margin-bottom:12px">
+              <label class="chip pick"><input type="checkbox" id="mapUncontacted" style="margin-right:5px">Холбогдоогүй</label>
+            </div>
+            <button class="btn" style="width:100%" onclick="CivicMap.resetFilters()">Шүүлтүүр цэвэрлэх</button>
+          </div>
+          <div class="mapstats" id="mapStats"></div>
+        </div>
+        <div id="mapbox">
+          <div id="leaflet"></div>
+          <div class="maptools">
+            <button class="btn sm" id="mvMarkers">● Цэг</button>
+            <button class="btn sm" id="mvHeat">◍ Дулаан</button>
+            <button class="btn sm" id="mvKhoroo">◈ Хороо</button>
+            <button class="btn sm" id="mvFit">⤢ Багтаах</button>
+            <button class="btn sm" id="mvExport">⤓ Экспорт</button>
+          </div>
+          <div class="maplegend" id="mapLegend"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────── ӨРХИЙН БҮРТГЭЛ ─────── -->
+    <section class="page" data-page="households">
+      <div class="topbar">
+        <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
+        <div><h1>Өрхийн бүртгэл</h1><div class="sub" id="hhSub">—</div></div>
+        <div class="topbar-right">
+          <button class="btn" id="hhExport">⤓ Экспорт</button>
+          <button class="btn danger hide" id="hhDelSel">🗑 Устгах (<span id="hhSelN">0</span>)</button>
+          <button class="btn primary" id="hhAdd">+ Шинэ өрх</button>
+        </div>
+      </div>
+      <div class="card" style="margin-top:14px;padding:14px 16px">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <div class="search" style="flex:1;min-width:200px">
+            <span style="color:var(--text-mute)">⌕</span>
+            <input id="hhQ" placeholder="Код, нэр, хаяг, утас...">
+          </div>
+          <select class="inp" id="hhDist"><option value="">Бүх дүүрэг</option></select>
+          <select class="inp" id="hhKhoroo"><option value="">Бүх хороо</option></select>
+          <select class="inp" id="hhSup"><option value="">Бүх түвшин</option></select>
+          <select class="inp" id="hhParty"><option value="">Бүх нам</option></select>
+          <select class="inp" id="hhStaff"><option value="">Бүх ухуулагч</option></select>
+          <select class="inp" id="hhSeg"><option value="">Бүх AI сегмент</option></select>
+        </div>
+      </div>
+      <div class="card pad0" style="margin-top:14px">
+        <div class="tbl-wrap"><table class="tbl" id="hhTable"></table></div>
+        <div class="pager" id="hhPager"></div>
+      </div>
+    </section>
+
+    <!-- ─────── ИРГЭД ─────── -->
+    <section class="page" data-page="citizens">
+      <div class="topbar">
+        <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
+        <div><h1>Иргэдийн бүртгэл</h1><div class="sub" id="ctSub">—</div></div>
+        <div class="topbar-right">
+          <button class="btn" id="ctExport">⤓ Экспорт</button>
+        </div>
+      </div>
+      <div class="card" style="margin-top:14px;padding:14px 16px">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <div class="search" style="flex:1;min-width:200px">
+            <span style="color:var(--text-mute)">⌕</span><input id="ctQ" placeholder="Нэр, утас...">
+          </div>
+          <select class="inp" id="ctDist"><option value="">Бүх дүүрэг</option></select>
+          <select class="inp" id="ctGender"><option value="">Бүх хүйс</option><option>Эр</option><option>Эм</option></select>
+          <select class="inp" id="ctAge"><option value="">Бүх нас</option>
+            <option value="18-25">18–25</option><option value="26-35">26–35</option>
+            <option value="36-45">36–45</option><option value="46-60">46–60</option>
+            <option value="61-120">60+</option><option value="0-17">Сонгуулийн эрхгүй</option></select>
+          <select class="inp" id="ctSup"><option value="">Бүх түвшин</option></select>
+        </div>
+      </div>
+      <div class="grid g3" id="ctStats" style="margin-top:14px"></div>
+      <div class="card pad0" style="margin-top:14px">
+        <div class="tbl-wrap"><table class="tbl" id="ctTable"></table></div>
+        <div class="pager" id="ctPager"></div>
+      </div>
+    </section>
+
+    <!-- ─────── ХӨТӨЛБӨР ─────── -->
+    <section class="page" data-page="programs">
+      <div class="topbar">
+        <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
+        <div><h1>Төсөл хөтөлбөр</h1><div class="sub">Хэрэгжүүлсэн ажил ба өрхийн хамрагдалт</div></div>
+        <div class="topbar-right"><button class="btn primary" id="pgAdd">+ Шинэ хөтөлбөр</button></div>
+      </div>
+      <div class="grid g2" id="pgCards" style="margin-top:14px"></div>
+    </section>
+
+    <!-- ─────── ГОМДОЛ ─────── -->
+    <section class="page" data-page="issues">
+      <div class="topbar">
+        <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
+        <div><h1>Санал гомдол</h1><div class="sub" id="isSub">—</div></div>
+        <div class="topbar-right">
+          <select class="inp" id="isStatus"><option value="">Бүх төлөв</option>
+            <option>Шинэ</option><option>Хүлээгдэж буй</option><option>Шийдэгдсэн</option></select>
+          <select class="inp" id="isCat"><option value="">Бүх ангилал</option></select>
+          <button class="btn" id="isExport">⤓ Экспорт</button>
+        </div>
+      </div>
+      <div class="grid g2" style="margin-top:14px">
+        <div class="card"><div class="card-h"><h3>Ангиллаар</h3></div><div id="isCatBars"></div></div>
+        <div class="card"><div class="card-h"><h3>Хороогоор (шийдэгдээгүй)</h3></div><div id="isKhBars"></div></div>
+      </div>
+      <div class="card pad0" style="margin-top:14px">
+        <div class="tbl-wrap"><table class="tbl" id="isTable"></table></div>
+        <div class="pager" id="isPager"></div>
+      </div>
+    </section>
+
+    <!-- ─────── AI ШИНЖИЛГЭЭ ─────── -->
+    <section class="page" data-page="ai">
+      <div class="topbar">
+        <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
+        <div><h1>✦ Дэмжлэгийн шинжилгээ</h1><div class="sub">Өрх бүрийн дэмжих магадлал ба хөрвүүлэх өгөөж</div></div>
+        <div class="topbar-right">
+          <select class="inp" id="aiDist"><option value="">Бүх дүүрэг</option></select>
+          <select class="inp" id="aiSeg"><option value="">Бүх сегмент</option></select>
+          <button class="btn" id="aiExport">⤓ Жагсаалт татах</button>
+        </div>
+      </div>
+      <div class="kpis" id="aiKpis"></div>
+      <div class="grid g2">
+        <div class="card"><div class="card-h"><div><h3>Магадлалын тархалт</h3><div class="sub">Өрхийн тоо / 10% тутам</div></div></div>
+          <div id="aiHist"></div></div>
+        <div class="card"><div class="card-h"><div><h3>Загварын хүчин зүйлс</h3><div class="sub">Дундаж хувь нэмэр</div></div></div>
+          <div id="aiFactors"></div></div>
+      </div>
+      <div class="card pad0" style="margin-top:14px">
+        <div class="card-h"><div><h3>Тэргүүлэх зорилтот жагсаалт</h3>
+          <div class="sub">Хөрвүүлэх боломж × саналын жин × датаны хуучралт</div></div></div>
+        <div class="tbl-wrap"><table class="tbl" id="aiTable"></table></div>
+        <div class="pager" id="aiPager"></div>
+      </div>
+    </section>
+
+    <!-- ─────── СТРАТЕГИ ─────── -->
+    <section class="page" data-page="strategy">
+      <div class="topbar">
+        <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
+        <div><h1>◈ Хорооны стратеги</h1><div class="sub">Хороо бүрийн боломж, зөвлөмж, нөөцийн хуваарилалт</div></div>
+        <div class="topbar-right">
+          <select class="inp" id="stDist"><option value="">Бүх дүүрэг</option></select>
+          <button class="btn" id="stExport">⤓ Экспорт</button>
+        </div>
+      </div>
+      <div class="card pad0" style="margin-top:14px">
+        <div class="tbl-wrap"><table class="tbl" id="stTable"></table></div>
+      </div>
+    </section>
+
+    <!-- ─────── БАГ ─────── -->
+    <section class="page" data-page="team">
+      <div class="topbar">
+        <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
+        <div><h1>Багийн гүйцэтгэл</h1><div class="sub">Ухуулагч, менежерүүдийн ачаалал ба үр дүн</div></div>
+        <div class="topbar-right">
+          <select class="inp" id="tmDays"><option value="7">7 хоног</option>
+            <option value="30" selected>30 хоног</option><option value="90">90 хоног</option>
+            <option value="3650">Бүх хугацаа</option></select>
+          <button class="btn" id="tmExport">⤓ Экспорт</button>
+          <button class="btn primary" id="tmAdd">+ Гишүүн нэмэх</button>
+        </div>
+      </div>
+      <div class="kpis" id="tmKpis"></div>
+      <div class="card pad0" style="margin-top:14px">
+        <div class="tbl-wrap"><table class="tbl" id="tmTable"></table></div>
+      </div>
+    </section>
+
+    <!-- ─────── ДААЛГАВАР ─────── -->
+    <section class="page" data-page="tasks">
+      <div class="topbar">
+        <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
+        <div><h1>Даалгавар</h1><div class="sub" id="tkSub">Штабын дотоод ажлын хяналт</div></div>
+        <div class="topbar-right">
+          <button class="btn" id="tkViewTable">▤ Хүснэгт</button>
+          <button class="btn" id="tkViewKanban">▥ Канбан</button>
+          <select class="inp" id="tkOwner"><option value="">Бүх хариуцагч</option></select>
+          <button class="btn primary" id="tkAdd">+ Шинэ даалгавар</button>
+        </div>
+      </div>
+      <div class="kpis" id="tkKpis"></div>
+      <div id="tkBody" style="margin-top:14px"></div>
+    </section>
+
+    <!-- ─────── ИМПОРТ / ЭКСПОРТ ─────── -->
+    <section class="page" data-page="io">
+      <div class="topbar">
+        <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
+        <div><h1>Импорт / Экспорт</h1><div class="sub">Excel, CSV файлаас дата оруулах ба буцаан татах</div></div>
+      </div>
+
+      <div class="steps" id="ioSteps">
+        <div class="step on" data-s="1"><span class="n">1</span> Файл сонгох</div><span class="sep"></span>
+        <div class="step" data-s="2"><span class="n">2</span> Багана тааруулах</div><span class="sep"></span>
+        <div class="step" data-s="3"><span class="n">3</span> Урьдчилан харах</div><span class="sep"></span>
+        <div class="step" data-s="4"><span class="n">4</span> Оруулах</div>
+      </div>
+
+      <div class="card" id="ioStep1">
+        <div class="card-h"><div><h3>1. Файлаа оруулна уу</h3>
+          <div class="sub">CSV, XLSX, XLS, JSON — багана нь ямар ч нэртэй байж болно</div></div></div>
+        <div class="drop" id="ioDrop">
+          <div class="ic">⤓</div>
+          <b>Файлаа энд чирж оруулна уу</b>
+          <p>эсвэл дарж сонгоно уу · дээд тал 20 МБ</p>
+        </div>
+        <input type="file" id="ioFile" accept=".csv,.xlsx,.xls,.json,.txt" class="hide">
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn" id="ioTemplate">⤓ Загвар файл татах</button>
+          <button class="btn" id="ioRestore">↺ Нөөцөөс сэргээх (JSON)</button>
+        </div>
+      </div>
+
+      <div class="card hide" id="ioStep2" style="margin-top:14px">
+        <div class="card-h"><div><h3>2. Багана тааруулах</h3>
+          <div class="sub" id="ioFileInfo">—</div></div>
+          <div class="r"><button class="btn sm" id="ioAuto">✦ Автоматаар тааруулах</button></div></div>
+        <div id="ioMapping"></div>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <label class="chip pick"><input type="checkbox" id="ioDedupe" checked style="margin-right:6px">Давхардсан өрх нэгтгэх</label>
+          <label class="chip pick"><input type="checkbox" id="ioGeo" checked style="margin-right:6px">Координатгүй бол хорооны төвд байрлуулах</label>
+          <select class="inp" id="ioMode">
+            <option value="append">Одоогийн дата дээр нэмэх</option>
+            <option value="replace">Бүх өрхийг солих</option>
+          </select>
+          <button class="btn primary" id="ioNext2" style="margin-left:auto">Урьдчилан харах →</button>
+        </div>
+      </div>
+
+      <div class="card hide" id="ioStep3" style="margin-top:14px">
+        <div class="card-h"><div><h3>3. Урьдчилан харах</h3><div class="sub" id="ioPrevInfo">—</div></div>
+          <div class="r">
+            <button class="btn" id="ioBack">← Буцах</button>
+            <button class="btn primary" id="ioCommit">✓ Датаг оруулах</button></div></div>
+        <div class="tbl-wrap"><table class="tbl" id="ioPreview"></table></div>
+      </div>
+
+      <div class="grid g2" style="margin-top:20px">
+        <div class="card">
+          <div class="card-h"><div><h3>Экспорт</h3><div class="sub">Одоогийн дата санг татаж авах</div></div></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn" data-exp="households-xlsx">⤓ Өрх (Excel)</button>
+            <button class="btn" data-exp="households-csv">⤓ Өрх (CSV)</button>
+            <button class="btn" data-exp="citizens-xlsx">⤓ Иргэд (Excel)</button>
+            <button class="btn" data-exp="ai-xlsx">⤓ AI оноо (Excel)</button>
+            <button class="btn" data-exp="full-xlsx">⤓ Бүх хүснэгт (Excel)</button>
+            <button class="btn primary" data-exp="backup-json">⤓ Бүрэн нөөц (JSON)</button>
+          </div>
+          <p style="font-size:12px;color:var(--text-mute);margin-top:14px;line-height:1.7">
+            JSON нөөц нь бүх хүснэгтийг бүрэн хадгална — өөр компьютер дээр сэргээхэд ашиглана.
+            Excel экспорт нь тайлан, хэвлэлд тохиромжтой.
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-h"><div><h3>Импортын түүх</h3></div></div>
+          <div id="ioHistory"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────── ТОХИРГОО ─────── -->
+    <section class="page" data-page="settings">
+      <div class="topbar">
+        <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
+        <div><h1>Тохиргоо</h1><div class="sub">Хандалт, загварын жин, дата сан</div></div>
+      </div>
+
+      <div class="grid g2" style="margin-top:14px">
+        <div class="card">
+          <div class="card-h"><div><h3>Хэрэглэгчид ба эрх</h3>
+            <div class="sub">Хэн юу хийж чадахыг тодорхойлно</div></div>
+            <div class="r"><button class="btn sm primary" id="usrAdd">+ Нэмэх</button></div></div>
+          <div class="tbl-wrap"><table class="tbl" id="usrTable"></table></div>
+          <p style="font-size:11.5px;color:var(--text-mute);margin-top:12px;line-height:1.7">
+            Демо горимд нууц үг энэ браузерт хадгалагдана. Supabase холбогдсон үед
+            нэвтрэлт серверээр хийгдэж, эрхийг RLS дүрмээр хамгаална.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><div><h3>✦ AI загварын жин</h3>
+            <div class="sub">Хүчин зүйл тус бүрийн нөлөөг тохируулна</div></div>
+            <div class="r"><button class="btn sm" id="wReset">↺ Анхны утга</button></div></div>
+          <div id="wSliders"></div>
+        </div>
+      </div>
+
+      <div class="grid g2" style="margin-top:14px">
+        <div class="card">
+          <div class="card-h"><div><h3>Supabase холболт</h3>
+            <div class="sub">Дата санг сервер дээр хадгалж, олон хүн зэрэг ажиллах</div></div></div>
+          <div class="field"><label class="fl">Project URL</label>
+            <input class="inp" id="sbUrl" placeholder="https://xxxx.supabase.co"></div>
+          <div class="field"><label class="fl">Publishable (anon) key</label>
+            <input class="inp" id="sbKey" placeholder="eyJhbGciOi..."></div>
+          <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:6px">
+            <button class="btn primary" id="sbSave">Холбох</button>
+            <button class="btn" id="sbPush">↑ Хадгалах (push)</button>
+            <button class="btn" id="sbPull">↓ Татах (pull)</button>
+          </div>
+          <div id="sbStatus" style="font-size:12px;color:var(--text-mute);margin-top:12px"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><div><h3>Дата сан</h3><div class="sub">Аюултай үйлдлүүд</div></div></div>
+          <div id="dbStats" class="mini" style="margin-bottom:18px"></div>
+          <div style="display:flex;gap:9px;flex-wrap:wrap">
+            <button class="btn" id="dbReseed">↺ Жишээ дата дахин үүсгэх</button>
+            <button class="btn danger" id="dbClear">🗑 Бүх датаг устгах</button>
+          </div>
+          <p style="font-size:11.5px;color:var(--text-mute);margin-top:14px;line-height:1.7">
+            Устгахын өмнө <b>Импорт/Экспорт → Бүрэн нөөц (JSON)</b> хийж ав.
+            Дата энэ браузерын localStorage-д хадгалагдаж байгаа тул кэш цэвэрлэвэл устана.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Drawer -->
+<div class="drawer-bg" id="drawerBg" onclick="CivicUI.closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-h">
+    <div><h2 id="drTitle">—</h2><div class="sub" id="drSub">—</div></div>
+    <button class="x" onclick="CivicUI.closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-b" id="drBody"></div>
+  <div class="drawer-f" id="drFoot"></div>
+</aside>
+
+<!-- Modal -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-h"><h2 id="mdTitle">—</h2><button class="x" onclick="CivicUI.closeModal()">✕</button></div>
+    <div class="modal-b" id="mdBody"></div>
+    <div class="modal-f" id="mdFoot"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/ai.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/io.js"></script>
+<script src="assets/js/map.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
