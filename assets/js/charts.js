@@ -51,8 +51,8 @@
     for (let i = 0; i <= 4; i++) {
       const v = top * i / 4, yy = y(v);
       g += '<line x1="' + P.l + '" y1="' + yy.toFixed(1) + '" x2="' + (W - P.r) + '" y2="' + yy.toFixed(1) +
-        '" stroke="#17223a" stroke-width="1" stroke-dasharray="3 4"/>' +
-        '<text x="' + (P.l - 8) + '" y="' + (yy + 4).toFixed(1) + '" fill="#647591" font-size="10.5" text-anchor="end">' +
+        '" stroke="#e3e8f2" stroke-width="1" stroke-dasharray="3 4"/>' +
+        '<text x="' + (P.l - 8) + '" y="' + (yy + 4).toFixed(1) + '" fill="#8493ab" font-size="10.5" text-anchor="end">' +
         fmt(v) + '</text>';
     }
     let paths = '';
@@ -69,13 +69,13 @@
       paths += '<path d="' + d + '" fill="none" stroke="' + s.color + '" stroke-width="2.2" ' +
         'stroke-linejoin="round" stroke-linecap="round"/>';
       paths += pts.map(p => '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) +
-        '" r="3" fill="#080d17" stroke="' + s.color + '" stroke-width="2"/>').join('');
+        '" r="3" fill="#ffffff" stroke="' + s.color + '" stroke-width="2"/>').join('');
     });
     let lbl = '';
     const skip = Math.ceil(n / 8);
     (opts.labels || []).forEach((L, i) => {
       if (i % skip === 0 || i === n - 1) {
-        lbl += '<text x="' + x(i).toFixed(1) + '" y="' + (H - 9) + '" fill="#647591" font-size="10.5" ' +
+        lbl += '<text x="' + x(i).toFixed(1) + '" y="' + (H - 9) + '" fill="#8493ab" font-size="10.5" ' +
           'text-anchor="middle">' + esc(L) + '</text>';
       }
     });
@@ -109,9 +109,9 @@
       a = a2;
     });
     return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '">' + out +
-      '<text x="' + R + '" y="' + (R - 2) + '" text-anchor="middle" fill="#e6edf7" font-size="' +
+      '<text x="' + R + '" y="' + (R - 2) + '" text-anchor="middle" fill="#101827" font-size="' +
       (size / 6.5).toFixed(0) + '" font-weight="700">' + esc(centerVal) + '</text>' +
-      '<text x="' + R + '" y="' + (R + 19) + '" text-anchor="middle" fill="#647591" font-size="11.5">' +
+      '<text x="' + R + '" y="' + (R + 19) + '" text-anchor="middle" fill="#8493ab" font-size="11.5">' +
       esc(centerLbl) + '</text></svg>';
   }
 
@@ -127,7 +127,7 @@
     for (let i = 0; i <= 3; i++) {
       const yy = P.t + (H - P.t - P.b) * i / 3;
       out += '<line x1="' + P.l + '" y1="' + yy + '" x2="' + (W - P.r) + '" y2="' + yy +
-        '" stroke="#17223a" stroke-dasharray="3 4"/>';
+        '" stroke="#e3e8f2" stroke-dasharray="3 4"/>';
     }
     items.forEach((it, i) => {
       const bx = P.l + i * bw + bw * 0.22, w = bw * 0.56;
@@ -135,10 +135,10 @@
       out += '<rect x="' + bx.toFixed(1) + '" y="' + by.toFixed(1) + '" width="' + w.toFixed(1) +
         '" height="' + Math.max(1, hh).toFixed(1) + '" rx="5" fill="' + (it.color || '#2557d6') + '" opacity=".9"/>' +
         '<text x="' + (bx + w / 2).toFixed(1) + '" y="' + (by - 7).toFixed(1) +
-        '" text-anchor="middle" fill="#e6edf7" font-size="11.5" font-weight="650">' +
+        '" text-anchor="middle" fill="#101827" font-size="11.5" font-weight="650">' +
         esc(it.label != null ? it.label : fmt(it.value)) + '</text>' +
         '<text x="' + (bx + w / 2).toFixed(1) + '" y="' + (H - 12) +
-        '" text-anchor="middle" fill="#647591" font-size="10.5">' + esc(it.name) + '</text>';
+        '" text-anchor="middle" fill="#8493ab" font-size="10.5">' + esc(it.name) + '</text>';
     });
     return '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;display:block">' + out + '</svg>';
   }
@@ -166,7 +166,7 @@
     return barChart(counts.map((c, i) => ({
       name: (i * 100 / bins) + '–' + ((i + 1) * 100 / bins) + '%',
       value: c,
-      color: i < 3 ? '#f2385a' : i < 4 ? '#fb923c' : i < 6 ? '#f5b428' : i < 8 ? '#7ee08a' : '#16c98d'
+      color: i < 3 ? '#d92549' : i < 4 ? '#e2701a' : i < 6 ? '#b07d06' : i < 8 ? '#5cb85c' : '#0d8f63'
     })), { height: 240 });
   }
 
@@ -176,11 +176,11 @@
     const R = size / 2, rr = R - 8, C = 2 * Math.PI * rr;
     const off = C * (1 - prob);
     return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '">' +
-      '<circle cx="' + R + '" cy="' + R + '" r="' + rr + '" fill="none" stroke="#1c2942" stroke-width="9"/>' +
+      '<circle cx="' + R + '" cy="' + R + '" r="' + rr + '" fill="none" stroke="#e4eaf4" stroke-width="9"/>' +
       '<circle cx="' + R + '" cy="' + R + '" r="' + rr + '" fill="none" stroke="' + color +
       '" stroke-width="9" stroke-linecap="round" stroke-dasharray="' + C.toFixed(1) +
       '" stroke-dashoffset="' + off.toFixed(1) + '" transform="rotate(-90 ' + R + ' ' + R + ')"/>' +
-      '<text x="' + R + '" y="' + (R + 6) + '" text-anchor="middle" fill="#e6edf7" font-size="20" ' +
+      '<text x="' + R + '" y="' + (R + 6) + '" text-anchor="middle" fill="#101827" font-size="20" ' +
       'font-weight="700">' + Math.round(prob * 100) + '%</text></svg>';
   }
 

@@ -171,11 +171,11 @@
 
   /* ---------- Сегмент ---------- */
   function seg(p) {
-    if (p >= 0.78) return { key: 'core', name: 'Бат бөх дэмжигч', color: '#16c98d', cls: 't-s5' };
-    if (p >= 0.60) return { key: 'lean', name: 'Хазайсан дэмжигч', color: '#7ee08a', cls: 't-s4' };
-    if (p >= 0.42) return { key: 'swing', name: 'Эргэлзэгч — гол зорилтот', color: '#f5b428', cls: 't-s3' };
-    if (p >= 0.25) return { key: 'soft-opp', name: 'Хазайсан эсрэг', color: '#fb923c', cls: 't-s2' };
-    return { key: 'opp', name: 'Эсрэг', color: '#f2385a', cls: 't-s1' };
+    if (p >= 0.78) return { key: 'core', name: 'Бат бөх дэмжигч', color: '#0d8f63', cls: 't-s5' };
+    if (p >= 0.60) return { key: 'lean', name: 'Хазайсан дэмжигч', color: '#5cb85c', cls: 't-s4' };
+    if (p >= 0.42) return { key: 'swing', name: 'Эргэлзэгч — гол зорилтот', color: '#b07d06', cls: 't-s3' };
+    if (p >= 0.25) return { key: 'soft-opp', name: 'Хазайсан эсрэг', color: '#e2701a', cls: 't-s2' };
+    return { key: 'opp', name: 'Эсрэг', color: '#d92549', cls: 't-s1' };
   }
 
   /* ---------- Зөвлөмж ---------- */

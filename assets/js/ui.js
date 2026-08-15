@@ -151,39 +151,39 @@
 
     $('dashKpis').innerHTML = [
       kpi({
-        label: 'Бүртгэлтэй өрх', value: fmt(s.households), icon: '🏠', color: '#7ea8ff',
+        label: 'Бүртгэлтэй өрх', value: fmt(s.households), icon: '🏠', color: '#2557d6',
         tint: 'rgba(37,87,214,.25)', icbg: 'rgba(37,87,214,.16)',
         spark: tr.map(t => t.contacts),
         note: '<b>' + fmt(s.people) + '</b> иргэн · <b>' + fmt(s.voters) + '</b> сонгогч'
       }),
       kpi({
-        label: 'Дэмжигч өрх', value: fmt(s.supporters), icon: '✓', color: '#16c98d',
-        tint: 'rgba(22,201,141,.22)', icbg: 'rgba(22,201,141,.15)',
+        label: 'Дэмжигч өрх', value: fmt(s.supporters), icon: '✓', color: '#0d8f63',
+        tint: 'rgba(13,143,99,.22)', icbg: 'rgba(13,143,99,.15)',
         spark: tr.map(t => t.positive),
         note: '<b class="up">' + pc(s.supportRate) + '</b> нийт өрхийн'
       }),
       kpi({
-        label: 'AI дундаж магадлал', value: pc(s.avgProb), icon: '✦', color: '#5b8cff',
-        tint: 'rgba(91,140,255,.22)', icbg: 'rgba(91,140,255,.15)',
+        label: 'AI дундаж магадлал', value: pc(s.avgProb), icon: '✦', color: '#3d7dff',
+        tint: 'rgba(61,125,255,.22)', icbg: 'rgba(61,125,255,.15)',
         spark: tr.map(t => Math.round(t.rate * 100)),
         note: 'Загварын дундаж дэмжих магадлал'
       }),
       kpi({
-        label: 'Хамрагдалт', value: pc(s.coverage), icon: '◎', color: '#22d3ee',
-        tint: 'rgba(34,211,238,.2)', icbg: 'rgba(34,211,238,.14)',
+        label: 'Хамрагдалт', value: pc(s.coverage), icon: '◎', color: '#0e9fbc',
+        tint: 'rgba(14,159,188,.2)', icbg: 'rgba(14,159,188,.14)',
         note: '<b>' + fmt(s.households - s.contacted) + '</b> өрхтэй хараахан холбогдоогүй'
       }),
       kpi({
         label: 'Шийдэгдээгүй гомдол', value: fmt(st.db.issues.filter(i => i.status !== 'Шийдэгдсэн' &&
-          (!scope || i.district === scope)).length), icon: '⚑', color: '#f5b428',
-        tint: 'rgba(245,180,40,.2)', icbg: 'rgba(245,180,40,.14)',
+          (!scope || i.district === scope)).length), icon: '⚑', color: '#b07d06',
+        tint: 'rgba(176,125,6,.2)', icbg: 'rgba(176,125,6,.14)',
         note: 'Шийдвэрлэвэл дэмжлэг хамгийн хурдан өснө'
       })
     ].join('');
 
     $('trendChart').innerHTML = C().areaChart([
       { name: 'Холбоо барилт', data: tr.map(t => t.contacts), color: '#2557d6' },
-      { name: 'Эерэг хариу', data: tr.map(t => t.positive), color: '#16c98d', fill: false }
+      { name: 'Эерэг хариу', data: tr.map(t => t.positive), color: '#0d8f63', fill: false }
     ], { labels: tr.map(t => t.label), height: 250 });
 
     const items = [5, 4, 3, 2, 1, 0].map(k => ({
@@ -224,19 +224,19 @@
         '<td class="num">' + fmt(x.reached) + '</td>' +
         '<td class="num" style="color:' + (x.hitRate > .5 ? 'var(--green)' : 'var(--text-dim)') + '">' +
         pc(x.hitRate) + '</td>' +
-        '<td>' + C().progress(x.targetPct, x.targetPct > .8 ? '#16c98d' : '#2557d6') + '</td></tr>').join('') +
+        '<td>' + C().progress(x.targetPct, x.targetPct > .8 ? '#0d8f63' : '#2557d6') + '</td></tr>').join('') +
       '</tbody>';
 
     /* Даалгавар */
     const ts = st.taskStats();
     $('taskMini').innerHTML = [
-      ['Нээлттэй', ts.open, '#2557d6'], ['Хугацаа хэтэрсэн', ts.overdue, '#f2385a'],
-      ['Өндөр ач холбогдол', ts.highOpen, '#f5b428'], ['Дууссан', ts.done, '#16c98d']
+      ['Нээлттэй', ts.open, '#2557d6'], ['Хугацаа хэтэрсэн', ts.overdue, '#d92549'],
+      ['Өндөр ач холбогдол', ts.highOpen, '#b07d06'], ['Дууссан', ts.done, '#0d8f63']
     ].map(([l, v, c]) => '<div class="m"><div class="l">' + l + '</div>' +
       '<div class="v" style="color:' + c + '">' + fmt(v) + '</div></div>').join('');
     $('taskBars').innerHTML = C().hbars(ts.byStatus.map(x => ({
       name: x.status, value: x.n,
-      color: { 'Хийгдэж буй': '#5b8cff', 'Хүлээгдэж буй': '#f5b428', 'Шалгуулж буй': '#fb923c', 'Дууссан': '#16c98d' }[x.status]
+      color: { 'Хийгдэж буй': '#3d7dff', 'Хүлээгдэж буй': '#b07d06', 'Шалгуулж буй': '#e2701a', 'Дууссан': '#0d8f63' }[x.status]
     })));
 
     $('dashBrief').innerHTML = '<ul class="advice" style="margin:0">' +
@@ -254,7 +254,7 @@
     $('distBars').innerHTML = C().hbars(rows.map(d => ({
       name: d.name, value: d[m], label: lbl(d[m]),
       color: m === 'households' ? '#2557d6' :
-        d[m] > .6 ? '#16c98d' : d[m] > .45 ? '#7ee08a' : d[m] > .3 ? '#f5b428' : '#fb923c'
+        d[m] > .6 ? '#0d8f63' : d[m] > .45 ? '#5cb85c' : d[m] > .3 ? '#b07d06' : '#e2701a'
     })));
   }
 
@@ -410,7 +410,7 @@
     const body =
       /* AI */
       '<div class="aibox">' +
-      '<div class="hd"><span style="color:#7ea8ff">✦</span><b>Дэмжих магадлалын шинжилгээ</b>' +
+      '<div class="hd"><span style="color:#2557d6">✦</span><b>Дэмжих магадлалын шинжилгээ</b>' +
       '<span class="tag ' + s.segment.cls + '">' + esc(s.segment.name) + '</span></div>' +
       '<div class="gauge">' + C().gauge(s.prob, s.segment.color, 96) +
       '<div><div class="gv" style="color:' + s.segment.color + '">' + s.pct + '%</div>' +
@@ -418,7 +418,7 @@
       '<div class="gc">Итгэлцэл ' + pc(s.conf) + ' · ' + (s.conf < .4 ? 'дата дутуу' : 'хангалттай дата') + '</div></div></div>' +
       '<div class="factors">' + s.factors.map(f => {
         const w = Math.min(50, Math.abs(f.contrib) / 2.5 * 50);
-        const col = f.contrib >= 0 ? '#16c98d' : '#f2385a';
+        const col = f.contrib >= 0 ? '#0d8f63' : '#d92549';
         return '<div class="fac"><span class="fn">' + esc(f.name) +
           ' <span style="color:var(--text-mute);font-size:11px">· ' + esc(f.label) + '</span></span>' +
           '<span class="fb"><i style="' + (f.contrib >= 0 ? 'left:50%;' : 'right:50%;left:auto;') +
@@ -750,8 +750,8 @@
     $('ctSub').textContent = fmt(rows.length) + ' иргэн · ' + fmt(voters.length) + ' сонгуулийн эрхтэй';
     $('ctStats').innerHTML = [
       ['Сонгогч', fmt(voters.length), '#2557d6'],
-      ['Эр / Эм', male + ' / ' + (voters.length - male), '#5b8cff'],
-      ['Дундаж нас', voters.length ? Math.round(voters.reduce((s, c) => s + (c.birth_year ? yr - c.birth_year : 0), 0) / voters.length) : 0, '#22d3ee']
+      ['Эр / Эм', male + ' / ' + (voters.length - male), '#3d7dff'],
+      ['Дундаж нас', voters.length ? Math.round(voters.reduce((s, c) => s + (c.birth_year ? yr - c.birth_year : 0), 0) / voters.length) : 0, '#0e9fbc']
     ].map(([l, v, c]) => '<div class="card"><div class="kpi-lb">' + l + '</div>' +
       '<div class="kpi-v" style="color:' + c + '">' + v + '</div></div>').join('');
 
@@ -794,7 +794,7 @@
         '<div class="mini" style="margin-bottom:16px">' +
         '<div class="m"><div class="l">Хамрагдсан өрх</div><div class="v">' + fmt(rows.length) + '</div></div>' +
         '<div class="m"><div class="l">Иргэн</div><div class="v">' + fmt(s.people) + '</div></div>' +
-        '<div class="m"><div class="l">Дэмжлэг</div><div class="v" style="color:#16c98d">' + pc(s.supportRate) + '</div></div>' +
+        '<div class="m"><div class="l">Дэмжлэг</div><div class="v" style="color:#0d8f63">' + pc(s.supportRate) + '</div></div>' +
         '</div>' +
         '<div style="font-size:12.5px;color:var(--text-dim);margin-bottom:8px">Хамрах хүрээ ' +
         pc(rows.length / total) + '</div>' +
@@ -870,7 +870,7 @@
     });
     $('isKhBars').innerHTML = C().hbars(Object.entries(byKh)
       .sort((a, b) => b[1] - a[1]).slice(0, 9)
-      .map(([n, v]) => ({ name: n, value: v, color: '#f5b428' })));
+      .map(([n, v]) => ({ name: n, value: v, color: '#b07d06' })));
 
     const pageRows = slice('isPager', rows);
     $('isTable').innerHTML = '<thead><tr><th>Гарчиг</th><th>Ангилал</th><th>Байршил</th>' +
@@ -925,11 +925,11 @@
     const s = st.stats(base);
 
     $('aiKpis').innerHTML = [
-      kpi({ label: 'Дундаж магадлал', value: pc(s.avgProb), icon: '✦', color: '#7ea8ff', tint: 'rgba(37,87,214,.24)', icbg: 'rgba(37,87,214,.16)', note: fmt(base.length) + ' өрх дээр тооцсон' }),
-      kpi({ label: 'Бат бөх дэмжигч', value: fmt(segCount.core), icon: '◆', color: '#16c98d', tint: 'rgba(22,201,141,.22)', icbg: 'rgba(22,201,141,.15)', note: pc(segCount.core / Math.max(1, base.length)) + ' — GOTV зорилтот' }),
-      kpi({ label: 'Эргэлзэгч', value: fmt(segCount.swing), icon: '◈', color: '#f5b428', tint: 'rgba(245,180,40,.22)', icbg: 'rgba(245,180,40,.15)', note: 'Хамгийн өндөр өгөөжтэй бүлэг' }),
-      kpi({ label: 'Эсрэг талд', value: fmt(segCount.opp + segCount['soft-opp']), icon: '◇', color: '#f2385a', tint: 'rgba(242,56,90,.2)', icbg: 'rgba(242,56,90,.14)', note: 'Нөөц бага зарцуулах' }),
-      kpi({ label: 'Дата дутуу өрх', value: fmt(base.filter(h => AI().score(h).conf < .4).length), icon: '?', color: '#22d3ee', tint: 'rgba(34,211,238,.2)', icbg: 'rgba(34,211,238,.14)', note: 'Итгэлцэл 40%-иас доош' })
+      kpi({ label: 'Дундаж магадлал', value: pc(s.avgProb), icon: '✦', color: '#2557d6', tint: 'rgba(37,87,214,.24)', icbg: 'rgba(37,87,214,.16)', note: fmt(base.length) + ' өрх дээр тооцсон' }),
+      kpi({ label: 'Бат бөх дэмжигч', value: fmt(segCount.core), icon: '◆', color: '#0d8f63', tint: 'rgba(13,143,99,.22)', icbg: 'rgba(13,143,99,.15)', note: pc(segCount.core / Math.max(1, base.length)) + ' — GOTV зорилтот' }),
+      kpi({ label: 'Эргэлзэгч', value: fmt(segCount.swing), icon: '◈', color: '#b07d06', tint: 'rgba(176,125,6,.22)', icbg: 'rgba(176,125,6,.15)', note: 'Хамгийн өндөр өгөөжтэй бүлэг' }),
+      kpi({ label: 'Эсрэг талд', value: fmt(segCount.opp + segCount['soft-opp']), icon: '◇', color: '#d92549', tint: 'rgba(217,37,73,.2)', icbg: 'rgba(217,37,73,.14)', note: 'Нөөц бага зарцуулах' }),
+      kpi({ label: 'Дата дутуу өрх', value: fmt(base.filter(h => AI().score(h).conf < .4).length), icon: '?', color: '#0e9fbc', tint: 'rgba(14,159,188,.2)', icbg: 'rgba(14,159,188,.14)', note: 'Итгэлцэл 40%-иас доош' })
     ].join('');
 
     $('aiHist').innerHTML = C().histogram(base.map(h => AI().score(h).prob), 10);
@@ -948,8 +948,8 @@
       '<span class="fb" style="width:120px;flex:0 0 120px;height:8px"><i style="' +
       (f.avg >= 0 ? 'left:50%;' : 'right:50%;left:auto;') + 'width:' +
       (Math.abs(f.avg) / mxf * 50).toFixed(1) + '%;background:' +
-      (f.avg >= 0 ? '#16c98d' : '#f2385a') + '"></i></span>' +
-      '<span class="fv" style="color:' + (f.avg >= 0 ? '#16c98d' : '#f2385a') + '">' +
+      (f.avg >= 0 ? '#0d8f63' : '#d92549') + '"></i></span>' +
+      '<span class="fv" style="color:' + (f.avg >= 0 ? '#0d8f63' : '#d92549') + '">' +
       (f.avg >= 0 ? '+' : '') + f.avg.toFixed(2) + '</span></div>').join('') +
       '<p style="font-size:11.5px;color:var(--text-mute);margin-top:14px;line-height:1.7">' +
       'Эерэг утга нь дэмжлэгийг нэмэгдүүлж, сөрөг нь бууруулж байна. Жинг ' +
@@ -973,7 +973,7 @@
           '<div class="bartrack" style="width:48px;height:6px"><div class="barfill" style="width:' +
           p.s.pct + '%;background:' + p.s.segment.color + '"></div></div></div></td>' +
           '<td>' + segTag(p.s.segment) + '</td>' +
-          '<td><b style="color:#7ea8ff">' + (p.value * 100).toFixed(0) + '</b></td>' +
+          '<td><b style="color:#2557d6">' + (p.value * 100).toFixed(0) + '</b></td>' +
           '<td style="font-size:12px;color:var(--text-dim)">' + (f0 ? esc(f0.name) +
             '<div style="font-size:11px;color:var(--text-mute)">' + esc(f0.label) + '</div>' : '—') + '</td>' +
           '<td><button class="btn sm aiopen" data-id="' + p.h.id + '">Нээх</button></td></tr>';
@@ -1003,7 +1003,7 @@
       '<th>Дэмжлэг</th><th>AI магадлал</th><th>Хамрагдалт</th><th>Эргэлзэгч</th>' +
       '<th>Боломж</th><th>Зөвлөмж</th><th></th></tr></thead><tbody>' +
       rows.map(function (k, i) {
-        const col = k.avgProb >= .6 ? '#16c98d' : k.avgProb >= .45 ? '#f5b428' : '#f2385a';
+        const col = k.avgProb >= .6 ? '#0d8f63' : k.avgProb >= .45 ? '#b07d06' : '#d92549';
         return '<tr><td style="color:var(--text-mute);font-size:12px">' + (i + 1) + '</td>' +
           '<td><b>' + esc(k.district) + '</b><div style="font-size:11.5px;color:var(--text-mute)">' +
           k.khoroo + '-р хороо</div></td>' +
@@ -1011,9 +1011,9 @@
           '<td class="num">' + fmt(k.voters) + '</td>' +
           '<td><b style="color:' + col + '">' + pc(k.supportRate) + '</b></td>' +
           '<td>' + pc(k.avgProb) + '</td>' +
-          '<td><div style="width:74px">' + C().progress(k.coverage, k.coverage > .6 ? '#16c98d' : '#f5b428') + '</div></td>' +
+          '<td><div style="width:74px">' + C().progress(k.coverage, k.coverage > .6 ? '#0d8f63' : '#b07d06') + '</div></td>' +
           '<td>' + pc(k.swingShare) + '</td>' +
-          '<td><b style="color:#7ea8ff">' + (k.opportunity * 100).toFixed(0) + '</b></td>' +
+          '<td><b style="color:#2557d6">' + (k.opportunity * 100).toFixed(0) + '</b></td>' +
           '<td style="font-size:12.5px;color:var(--text-dim);max-width:250px">' + esc(k.action) + '</td>' +
           '<td><button class="btn sm stgo" data-d="' + esc(k.district) + '" data-k="' + k.khoroo + '">🗺</button></td></tr>';
       }).join('') + '</tbody>';
@@ -1054,11 +1054,11 @@
     }), { reached: 0, contacts: 0, positive: 0, assigned: 0 });
 
     $('tmKpis').innerHTML = [
-      kpi({ label: 'Идэвхтэй гишүүн', value: fmt(st.db.staff.filter(s => s.active !== false).length), icon: '📣', color: '#7ea8ff', tint: 'rgba(37,87,214,.24)', icbg: 'rgba(37,87,214,.16)', note: fmt(st.db.staff.length) + ' нийт бүртгэлтэй' }),
-      kpi({ label: 'Хүрсэн өрх', value: fmt(tot.reached), icon: '🏠', color: '#5b8cff', tint: 'rgba(91,140,255,.22)', icbg: 'rgba(91,140,255,.15)', note: 'сонгосон хугацаанд' }),
-      kpi({ label: 'Холбоо барилт', value: fmt(tot.contacts), icon: '☎', color: '#22d3ee', tint: 'rgba(34,211,238,.2)', icbg: 'rgba(34,211,238,.14)', note: 'нийт үйлдэл' }),
-      kpi({ label: 'Эерэг хариу', value: pc(tot.contacts ? tot.positive / tot.contacts : 0), icon: '✓', color: '#16c98d', tint: 'rgba(22,201,141,.22)', icbg: 'rgba(22,201,141,.15)', note: fmt(tot.positive) + ' эерэг уулзалт' }),
-      kpi({ label: 'Хариуцсан өрх', value: fmt(tot.assigned), icon: '◎', color: '#f5b428', tint: 'rgba(245,180,40,.2)', icbg: 'rgba(245,180,40,.14)', note: 'хуваарилагдсан нийт' })
+      kpi({ label: 'Идэвхтэй гишүүн', value: fmt(st.db.staff.filter(s => s.active !== false).length), icon: '📣', color: '#2557d6', tint: 'rgba(37,87,214,.24)', icbg: 'rgba(37,87,214,.16)', note: fmt(st.db.staff.length) + ' нийт бүртгэлтэй' }),
+      kpi({ label: 'Хүрсэн өрх', value: fmt(tot.reached), icon: '🏠', color: '#3d7dff', tint: 'rgba(61,125,255,.22)', icbg: 'rgba(61,125,255,.15)', note: 'сонгосон хугацаанд' }),
+      kpi({ label: 'Холбоо барилт', value: fmt(tot.contacts), icon: '☎', color: '#0e9fbc', tint: 'rgba(14,159,188,.2)', icbg: 'rgba(14,159,188,.14)', note: 'нийт үйлдэл' }),
+      kpi({ label: 'Эерэг хариу', value: pc(tot.contacts ? tot.positive / tot.contacts : 0), icon: '✓', color: '#0d8f63', tint: 'rgba(13,143,99,.22)', icbg: 'rgba(13,143,99,.15)', note: fmt(tot.positive) + ' эерэг уулзалт' }),
+      kpi({ label: 'Хариуцсан өрх', value: fmt(tot.assigned), icon: '◎', color: '#b07d06', tint: 'rgba(176,125,6,.2)', icbg: 'rgba(176,125,6,.14)', note: 'хуваарилагдсан нийт' })
     ].join('');
 
     $('tmTable').innerHTML = '<thead><tr><th>Гишүүн</th><th>Албан тушаал</th><th class="num">Хариуцсан</th>' +
@@ -1074,11 +1074,11 @@
           '<td><span class="tag t-purple">' + esc(role) + '</span></td>' +
           '<td class="num">' + fmt(r.assigned) + '</td>' +
           '<td class="num">' + fmt(r.reached) + '</td>' +
-          '<td><div style="width:80px">' + C().progress(r.coverage, r.coverage > .5 ? '#16c98d' : '#f5b428') + '</div></td>' +
-          '<td><b style="color:' + (r.hitRate > .5 ? '#16c98d' : r.hitRate > .3 ? '#f5b428' : '#f2385a') + '">' +
+          '<td><div style="width:80px">' + C().progress(r.coverage, r.coverage > .5 ? '#0d8f63' : '#b07d06') + '</div></td>' +
+          '<td><b style="color:' + (r.hitRate > .5 ? '#0d8f63' : r.hitRate > .3 ? '#b07d06' : '#d92549') + '">' +
           pc(r.hitRate) + '</b></td>' +
           '<td class="num">' + fmt(r.supporters) + '</td>' +
-          '<td><div style="width:90px">' + C().progress(r.targetPct, r.targetPct >= 1 ? '#16c98d' : '#2557d6') +
+          '<td><div style="width:90px">' + C().progress(r.targetPct, r.targetPct >= 1 ? '#0d8f63' : '#2557d6') +
           '</div><div style="font-size:10.5px;color:var(--text-mute)">' + fmt(r.reached) + ' / ' + fmt(r.target) + '</div></td>' +
           '<td class="num">' + r.openTasks + ' / ' + (r.openTasks + r.doneTasks) + '</td>' +
           '<td><button class="btn sm tmed" data-id="' + r.s.id + '">✎</button></td></tr>';
@@ -1141,10 +1141,10 @@
     $('tkViewTable').classList.toggle('primary', tkView === 'table');
     $('tkViewKanban').classList.toggle('primary', tkView === 'kanban');
     $('tkKpis').innerHTML = [
-      kpi({ label: 'Нээлттэй даалгавар', value: fmt(ts.open), icon: '✓', color: '#7ea8ff', tint: 'rgba(37,87,214,.24)', icbg: 'rgba(37,87,214,.16)', note: fmt(ts.total) + ' нийт' }),
-      kpi({ label: 'Хугацаа хэтэрсэн', value: fmt(ts.overdue), icon: '⏱', color: '#f2385a', tint: 'rgba(242,56,90,.2)', icbg: 'rgba(242,56,90,.14)', note: 'яаралтай авч үзэх' }),
-      kpi({ label: 'Өндөр ач холбогдол', value: fmt(ts.highOpen), icon: '⚑', color: '#f5b428', tint: 'rgba(245,180,40,.2)', icbg: 'rgba(245,180,40,.14)', note: 'нээлттэй байгаа' }),
-      kpi({ label: 'Дууссан', value: fmt(ts.done), icon: '◆', color: '#16c98d', tint: 'rgba(22,201,141,.22)', icbg: 'rgba(22,201,141,.15)', note: pc(ts.total ? ts.done / ts.total : 0) + ' гүйцэтгэл' })
+      kpi({ label: 'Нээлттэй даалгавар', value: fmt(ts.open), icon: '✓', color: '#2557d6', tint: 'rgba(37,87,214,.24)', icbg: 'rgba(37,87,214,.16)', note: fmt(ts.total) + ' нийт' }),
+      kpi({ label: 'Хугацаа хэтэрсэн', value: fmt(ts.overdue), icon: '⏱', color: '#d92549', tint: 'rgba(217,37,73,.2)', icbg: 'rgba(217,37,73,.14)', note: 'яаралтай авч үзэх' }),
+      kpi({ label: 'Өндөр ач холбогдол', value: fmt(ts.highOpen), icon: '⚑', color: '#b07d06', tint: 'rgba(176,125,6,.2)', icbg: 'rgba(176,125,6,.14)', note: 'нээлттэй байгаа' }),
+      kpi({ label: 'Дууссан', value: fmt(ts.done), icon: '◆', color: '#0d8f63', tint: 'rgba(13,143,99,.22)', icbg: 'rgba(13,143,99,.15)', note: pc(ts.total ? ts.done / ts.total : 0) + ' гүйцэтгэл' })
     ].join('');
 
     const owner = $('tkOwner').value;
@@ -1165,7 +1165,7 @@
     const groups = K().TASK_STATUS;
     $('tkBody').innerHTML = groups.map(function (g) {
       const items = rows.filter(t => t.status === g);
-      const col = { 'Хийгдэж буй': '#5b8cff', 'Хүлээгдэж буй': '#f5b428', 'Шалгуулж буй': '#fb923c', 'Дууссан': '#16c98d' }[g];
+      const col = { 'Хийгдэж буй': '#3d7dff', 'Хүлээгдэж буй': '#b07d06', 'Шалгуулж буй': '#e2701a', 'Дууссан': '#0d8f63' }[g];
       return '<div class="card pad0" style="margin-bottom:14px">' +
         '<div class="card-h" style="padding:16px 19px 4px;margin-bottom:8px">' +
         '<h3 style="display:flex;align-items:center;gap:9px;font-size:14.5px">' +
@@ -1185,7 +1185,7 @@
             '<td style="font-size:12.5px;color:' + (m.over ? 'var(--red)' : 'var(--text-dim)') + '">' +
             (m.over ? '⏱ ' : '') + esc(t.due || '—') + '</td>' +
             '<td>' + C().progress((t.progress || 0) / 100,
-              t.progress >= 100 ? '#16c98d' : t.progress >= 60 ? '#5b8cff' : '#2557d6') + '</td>' +
+              t.progress >= 100 ? '#0d8f63' : t.progress >= 60 ? '#3d7dff' : '#2557d6') + '</td>' +
             '<td><span class="tag t-purple">' + esc(t.tag || '—') + '</span></td>' +
             '<td><button class="btn sm tked" data-id="' + t.id + '">✎</button></td></tr>';
         }).join('') : '<tr><td colspan="7"><div class="tbl-empty">Даалгавар алга</div></td></tr>') +
@@ -1197,7 +1197,7 @@
 
   function drawKanban(rows) {
     const cols = K().TASK_STATUS;
-    const colc = { 'Хийгдэж буй': '#5b8cff', 'Хүлээгдэж буй': '#f5b428', 'Шалгуулж буй': '#fb923c', 'Дууссан': '#16c98d' };
+    const colc = { 'Хийгдэж буй': '#3d7dff', 'Хүлээгдэж буй': '#b07d06', 'Шалгуулж буй': '#e2701a', 'Дууссан': '#0d8f63' };
     $('tkBody').innerHTML = '<div style="display:grid;grid-template-columns:repeat(' + cols.length +
       ',minmax(230px,1fr));gap:13px;overflow-x:auto;padding-bottom:8px">' +
       cols.map(function (c) {

@@ -7,12 +7,12 @@
   /* ---------- Тогтмолууд ---------- */
 
   const SUPPORT = {
-    5: { key: 5, name: 'Бат дэмжигч', short: 'Бат', color: '#16c98d', cls: 't-s5' },
-    4: { key: 4, name: 'Дэмжигч', short: 'Дэмжигч', color: '#7ee08a', cls: 't-s4' },
-    3: { key: 3, name: 'Эргэлзэгч', short: 'Эргэлзэгч', color: '#f5b428', cls: 't-s3' },
-    2: { key: 2, name: 'Хазайсан эсрэг', short: 'Хазайсан', color: '#fb923c', cls: 't-s2' },
-    1: { key: 1, name: 'Эсрэг', short: 'Эсрэг', color: '#f2385a', cls: 't-s1' },
-    0: { key: 0, name: 'Тодорхойгүй', short: 'Тодорхойгүй', color: '#5a5a72', cls: 't-s0' }
+    5: { key: 5, name: 'Бат дэмжигч', short: 'Бат', color: '#0d8f63', cls: 't-s5' },
+    4: { key: 4, name: 'Дэмжигч', short: 'Дэмжигч', color: '#5cb85c', cls: 't-s4' },
+    3: { key: 3, name: 'Эргэлзэгч', short: 'Эргэлзэгч', color: '#b07d06', cls: 't-s3' },
+    2: { key: 2, name: 'Хазайсан эсрэг', short: 'Хазайсан', color: '#e2701a', cls: 't-s2' },
+    1: { key: 1, name: 'Эсрэг', short: 'Эсрэг', color: '#d92549', cls: 't-s1' },
+    0: { key: 0, name: 'Тодорхойгүй', short: 'Тодорхойгүй', color: '#8d9bb2', cls: 't-s0' }
   };
 
   const PARTIES = ['МАН', 'АН', 'ХҮН нам', 'Бусад нам', 'Хараат бус', 'Тодорхойгүй'];
