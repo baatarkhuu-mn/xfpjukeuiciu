@@ -199,12 +199,12 @@
         });
         c.bindPopup(
           '<b style="font-size:13.5px">' + esc(g.key) + '</b><br>' +
-          '<span style="color:#a2a2be">Өрх:</span> <b>' + g.households + '</b> · ' +
-          '<span style="color:#a2a2be">Иргэн:</span> <b>' + g.people + '</b><br>' +
-          '<span style="color:#a2a2be">Дэмжлэг:</span> <b style="color:' + col + '">' +
+          '<span style="color:#9aabc4">Өрх:</span> <b>' + g.households + '</b> · ' +
+          '<span style="color:#9aabc4">Иргэн:</span> <b>' + g.people + '</b><br>' +
+          '<span style="color:#9aabc4">Дэмжлэг:</span> <b style="color:' + col + '">' +
           Math.round(g.supportRate * 100) + '%</b> · ' +
-          '<span style="color:#a2a2be">AI:</span> <b>' + Math.round(g.avgProb * 100) + '%</b><br>' +
-          '<span style="color:#a2a2be">Хамрагдалт:</span> <b>' + Math.round(g.coverage * 100) + '%</b>'
+          '<span style="color:#9aabc4">AI:</span> <b>' + Math.round(g.avgProb * 100) + '%</b><br>' +
+          '<span style="color:#9aabc4">Хамрагдалт:</span> <b>' + Math.round(g.coverage * 100) + '%</b>'
         );
         c.addTo(khLayer);
         L.marker([g.lat, g.lng], {
@@ -234,20 +234,20 @@
     const open = st.issuesOf(h.id).filter(i => i.status !== 'Шийдэгдсэн').length;
     return '<div style="min-width:220px">' +
       '<b style="font-size:14px">' + esc(h.head || h.code) + '</b>' +
-      '<div style="color:#6c6c8c;font-size:11.5px;margin:2px 0 9px">' + esc(h.address || '') + '</div>' +
+      '<div style="color:#647591;font-size:11.5px;margin:2px 0 9px">' + esc(h.address || '') + '</div>' +
       '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px">' +
       '<span class="tag ' + sup.cls + '">' + sup.name + '</span>' +
       '<span class="tag ' + s.segment.cls + '">AI ' + s.pct + '%</span>' +
       (open ? '<span class="tag t-s1">' + open + ' гомдол</span>' : '') + '</div>' +
-      '<div style="font-size:12px;line-height:1.75;color:#a2a2be">' +
-      'Ам бүл: <b style="color:#e9e9f5">' + (h.family_size || 0) + '</b> · Сонгогч: <b style="color:#e9e9f5">' +
+      '<div style="font-size:12px;line-height:1.75;color:#9aabc4">' +
+      'Ам бүл: <b style="color:#e6edf7">' + (h.family_size || 0) + '</b> · Сонгогч: <b style="color:#e6edf7">' +
       cs.filter(c => c.is_voter).length + '</b><br>' +
-      'Нам: <b style="color:#e9e9f5">' + esc(h.party || '—') + '</b><br>' +
-      'Утас: <b style="color:#e9e9f5">' + esc(h.phone || '—') + '</b><br>' +
-      'Сүүлд: <b style="color:#e9e9f5">' + esc(h.last_contact || 'хэзээ ч') + '</b><br>' +
-      'Хариуцсан: <b style="color:#e9e9f5">' + esc(st.staffName(h.assigned_to)) + '</b></div>' +
+      'Нам: <b style="color:#e6edf7">' + esc(h.party || '—') + '</b><br>' +
+      'Утас: <b style="color:#e6edf7">' + esc(h.phone || '—') + '</b><br>' +
+      'Сүүлд: <b style="color:#e6edf7">' + esc(h.last_contact || 'хэзээ ч') + '</b><br>' +
+      'Хариуцсан: <b style="color:#e6edf7">' + esc(st.staffName(h.assigned_to)) + '</b></div>' +
       '<button class="mp-open" data-id="' + h.id + '" style="margin-top:11px;width:100%;padding:7px;' +
-      'border-radius:8px;background:#7c5cff;color:#fff;font-weight:600;font-size:12.5px;cursor:pointer">' +
+      'border-radius:8px;background:#2557d6;color:#fff;font-weight:600;font-size:12.5px;cursor:pointer">' +
       'Дэлгэрэнгүй нээх</button></div>';
   }
 

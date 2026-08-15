@@ -330,6 +330,13 @@
   }
   function stamp() { return new Date().toISOString().slice(0, 10); }
 
+  /* Татах файлын нэр — гаднын хүнд утга нь илрэхгүй байхаар */
+  const FILE_TAG = 'ail';
+  const FILE_KIND = {
+    households: 'orkh', citizens: 'irgen', ai: 'onool', staff: 'bag',
+    tasks: 'daalgavar', issues: 'gomdol', strategy: 'khoroo'
+  };
+
   function toCsv(rows) {
     if (!rows.length) return '';
     const cols = Object.keys(rows[0]);
@@ -465,7 +472,7 @@
     const T = stamp();
     if (what === 'backup-json') {
       download(new Blob([JSON.stringify(st.db, null, 1)], { type: 'application/json' }),
-        'civicos-backup-' + T + '.json');
+        FILE_TAG + '-noots-' + T + '.json');
       return;
     }
     if (what === 'full-xlsx') {
@@ -476,7 +483,7 @@
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(staffRows()), 'Баг');
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(taskRows()), 'Даалгавар');
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(issueRows()), 'Гомдол');
-      XLSX.writeFile(wb, 'civicos-бүрэн-' + T + '.xlsx');
+      XLSX.writeFile(wb, FILE_TAG + '-bugd-' + T + '.xlsx');
       return;
     }
     const map = {
@@ -497,7 +504,7 @@
     const parts = what.split('-');
     const kind = parts[0], fmt2 = parts[1];
     const data = (map[kind] || map.households)();
-    const name = 'civicos-' + kind + '-' + T;
+    const name = FILE_TAG + '-' + (FILE_KIND[kind] || kind) + '-' + T;
     if (fmt2 === 'csv') {
       download(new Blob([toCsv(data)], { type: 'text/csv;charset=utf-8' }), name + '.csv');
     } else {
@@ -540,7 +547,7 @@
       { 'Багана': '— Ерөнхий —', 'Тайлбар': 'Багана нь ямар ч нэртэй байж болно. Оруулах үед гараар тааруулж болно.' }
     ];
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(guide), 'Заавар');
-    XLSX.writeFile(wb, 'civicos-загвар.xlsx');
+    XLSX.writeFile(wb, FILE_TAG + '-zagvar.xlsx');
   }
 
   global.CivicIO = {
