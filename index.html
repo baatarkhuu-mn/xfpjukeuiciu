@@ -9,28 +9,24 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
-<link rel="stylesheet" href="assets/app.css?v=5">
+<link rel="stylesheet" href="assets/app.css?v=6">
 </head>
 <body>
 
 <!-- ══════════════ НЭВТРЭХ ══════════════ -->
 <div id="gate">
   <div class="gate-card">
-    <div class="brand">
-      <div class="logo-mark" style="width:42px;height:42px;flex:0 0 42px;border-radius:12px">
-        <svg viewBox="0 0 64 64" width="30" height="30" aria-hidden="true">
-          <defs><linearGradient id="lgGate" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#30C5FF"/><stop offset="1" stop-color="#7db8ff"/>
-          </linearGradient></defs>
-          <ellipse cx="32" cy="34" rx="26" ry="10.5" fill="none" stroke="#30C5FF" stroke-width="3" transform="rotate(-18 32 34)" opacity=".8"/>
-          <path d="M32 12c2.6 0 4.9 1.6 5.8 4l13 33c1 2.6-.9 5.4-3.7 5.4h-2.6c-2.4 0-4.5-1.5-5.3-3.7L32 31.8l-7.2 18.9c-.8 2.2-2.9 3.7-5.3 3.7h-2.6c-2.8 0-4.7-2.8-3.7-5.4l13-33c.9-2.4 3.2-4 5.8-4z" fill="url(#lgGate)"/>
-          <circle cx="53" cy="22" r="4.5" fill="#30C5FF"/>
-        </svg>
-      </div>
-      <div>
-        <h1>Ail<span class="brand-os">OS</span></h1>
-        <p class="sub brand-tag">Smarter&nbsp;&nbsp;Together</p>
-      </div>
+    <div class="brand brand-vert">
+      <svg class="brand-mark" viewBox="0 0 64 64" width="96" height="96" aria-hidden="true">
+        <defs><linearGradient id="lgGate" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#30C5FF"/><stop offset="1" stop-color="#0E6BFF"/>
+        </linearGradient></defs>
+        <ellipse cx="32" cy="34" rx="27" ry="11" fill="none" stroke="#30C5FF" stroke-width="3.4" transform="rotate(-18 32 34)" opacity=".85"/>
+        <path d="M32 10c2.7 0 5.1 1.7 6 4.2l13.6 34.6c1 2.7-.9 5.6-3.8 5.6h-2.7c-2.5 0-4.7-1.6-5.5-3.9L32 30.9l-7.6 19.6c-.8 2.3-3 3.9-5.5 3.9h-2.7c-2.9 0-4.8-2.9-3.8-5.6L26 14.2c.9-2.5 3.3-4.2 6-4.2z" fill="url(#lgGate)"/>
+        <circle cx="53.5" cy="21" r="4.6" fill="#0E6BFF"/>
+      </svg>
+      <h1 class="wm">Ail<span class="o">O</span>S</h1>
+      <p class="sub brand-tag">Smarter Together</p>
     </div>
     <label>Нэвтрэх нэр / И-мэйл</label>
     <input id="gu" type="text" autocomplete="username" placeholder="admin">
@@ -51,17 +47,16 @@
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="logo">
-      <div class="logo-mark">
-        <svg viewBox="0 0 64 64" width="22" height="22" aria-hidden="true">
-          <defs><linearGradient id="lgSide" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#30C5FF"/><stop offset="1" stop-color="#7db8ff"/>
-          </linearGradient></defs>
-          <ellipse cx="32" cy="34" rx="26" ry="10.5" fill="none" stroke="#30C5FF" stroke-width="3" transform="rotate(-18 32 34)" opacity=".8"/>
-          <path d="M32 12c2.6 0 4.9 1.6 5.8 4l13 33c1 2.6-.9 5.4-3.7 5.4h-2.6c-2.4 0-4.5-1.5-5.3-3.7L32 31.8l-7.2 18.9c-.8 2.2-2.9 3.7-5.3 3.7h-2.6c-2.8 0-4.7-2.8-3.7-5.4l13-33c.9-2.4 3.2-4 5.8-4z" fill="url(#lgSide)"/>
-          <circle cx="53" cy="22" r="4.5" fill="#30C5FF"/>
-        </svg>
-      </div>
-      <div class="logo-txt"><b>Ail<span class="brand-os">OS</span></b><span>Smarter Together</span></div>
+      <svg class="brand-mark" viewBox="0 0 64 64" width="34" height="34" aria-hidden="true">
+        <defs><linearGradient id="lgSide" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#30C5FF"/><stop offset="1" stop-color="#0E6BFF"/>
+        </linearGradient></defs>
+        <ellipse cx="32" cy="34" rx="27" ry="11" fill="none" stroke="#30C5FF" stroke-width="3.4" transform="rotate(-18 32 34)" opacity=".85"/>
+        <path d="M32 10c2.7 0 5.1 1.7 6 4.2l13.6 34.6c1 2.7-.9 5.6-3.8 5.6h-2.7c-2.5 0-4.7-1.6-5.5-3.9L32 30.9l-7.6 19.6c-.8 2.3-3 3.9-5.5 3.9h-2.7c-2.9 0-4.8-2.9-3.8-5.6L26 14.2c.9-2.5 3.3-4.2 6-4.2z" fill="url(#lgSide)"/>
+        <circle cx="53.5" cy="21" r="4.6" fill="#0E6BFF"/>
+      </svg>
+      <div class="brand-div" style="height:32px"></div>
+      <div class="logo-txt"><b class="wm">Ail<span class="o">O</span>S</b><span>Smarter Together</span></div>
     </div>
     <nav class="nav">
       <div class="nav-item active" data-page="dashboard"><span class="ic">▦</span> Хяналтын самбар</div>
@@ -550,12 +545,12 @@
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="assets/js/store.js?v=5"></script>
-<script src="assets/js/ai.js?v=5"></script>
-<script src="assets/js/charts.js?v=5"></script>
-<script src="assets/js/io.js?v=5"></script>
-<script src="assets/js/map.js?v=5"></script>
-<script src="assets/js/ui.js?v=5"></script>
-<script src="assets/js/main.js?v=5"></script>
+<script src="assets/js/store.js?v=6"></script>
+<script src="assets/js/ai.js?v=6"></script>
+<script src="assets/js/charts.js?v=6"></script>
+<script src="assets/js/io.js?v=6"></script>
+<script src="assets/js/map.js?v=6"></script>
+<script src="assets/js/ui.js?v=6"></script>
+<script src="assets/js/main.js?v=6"></script>
 </body>
 </html>
