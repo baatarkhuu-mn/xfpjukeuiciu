@@ -247,7 +247,7 @@
       'Сүүлд: <b style="color:#101827">' + esc(h.last_contact || 'хэзээ ч') + '</b><br>' +
       'Хариуцсан: <b style="color:#101827">' + esc(st.staffName(h.assigned_to)) + '</b></div>' +
       '<button class="mp-open" data-id="' + h.id + '" style="margin-top:11px;width:100%;padding:7px;' +
-      'border-radius:8px;background:#2557d6;color:#fff;font-weight:600;font-size:12.5px;cursor:pointer">' +
+      'border-radius:8px;background:#0e6bff;color:#fff;font-weight:600;font-size:12.5px;cursor:pointer">' +
       'Дэлгэрэнгүй нээх</button></div>';
   }
 

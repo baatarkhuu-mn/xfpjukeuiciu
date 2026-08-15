@@ -133,7 +133,7 @@
       const bx = P.l + i * bw + bw * 0.22, w = bw * 0.56;
       const by = y(it.value), hh = H - P.b - by;
       out += '<rect x="' + bx.toFixed(1) + '" y="' + by.toFixed(1) + '" width="' + w.toFixed(1) +
-        '" height="' + Math.max(1, hh).toFixed(1) + '" rx="5" fill="' + (it.color || '#2557d6') + '" opacity=".9"/>' +
+        '" height="' + Math.max(1, hh).toFixed(1) + '" rx="5" fill="' + (it.color || '#0e6bff') + '" opacity=".9"/>' +
         '<text x="' + (bx + w / 2).toFixed(1) + '" y="' + (by - 7).toFixed(1) +
         '" text-anchor="middle" fill="#101827" font-size="11.5" font-weight="650">' +
         esc(it.label != null ? it.label : fmt(it.value)) + '</text>' +
@@ -150,7 +150,7 @@
     return items.map(it =>
       '<div class="barrow"><div class="nm" title="' + esc(it.name) + '">' + esc(it.name) + '</div>' +
       '<div class="bartrack"><div class="barfill" style="width:' + (it.value / mx * 100).toFixed(1) +
-      '%;background:' + (it.color || '#2557d6') + '"></div></div>' +
+      '%;background:' + (it.color || '#0e6bff') + '"></div></div>' +
       '<div class="vl">' + esc(it.label != null ? it.label : fmt(it.value)) + '</div></div>'
     ).join('') || '<div class="empty"><p>Дата алга</p></div>';
   }
@@ -188,7 +188,7 @@
   function progress(v, color) {
     return '<div style="display:flex;align-items:center;gap:9px">' +
       '<div class="bartrack" style="flex:1;height:7px"><div class="barfill" style="width:' +
-      Math.round(v * 100) + '%;background:' + (color || '#2557d6') + '"></div></div>' +
+      Math.round(v * 100) + '%;background:' + (color || '#0e6bff') + '"></div></div>' +
       '<span style="font-size:11.5px;color:var(--text-dim);min-width:34px;text-align:right">' +
       Math.round(v * 100) + '%</span></div>';
   }

@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>AilOS</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232557d6'/><text x='16' y='23' font-size='18' text-anchor='middle' fill='white' font-family='sans-serif'>A</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%2330C5FF'/><stop offset='1' stop-color='%230E6BFF'/></linearGradient></defs><rect width='64' height='64' rx='14' fill='%230F172A'/><ellipse cx='32' cy='34' rx='26' ry='10.5' fill='none' stroke='%2330C5FF' stroke-width='3' transform='rotate(-18 32 34)' opacity='.8'/><path d='M32 12c2.6 0 4.9 1.6 5.8 4l13 33c1 2.6-.9 5.4-3.7 5.4h-2.6c-2.4 0-4.5-1.5-5.3-3.7L32 31.8l-7.2 18.9c-.8 2.2-2.9 3.7-5.3 3.7h-2.6c-2.8 0-4.7-2.8-3.7-5.4l13-33c.9-2.4 3.2-4 5.8-4z' fill='url(%23g)'/><circle cx='53' cy='22' r='4.5' fill='%2330C5FF'/></svg>">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
-<link rel="stylesheet" href="assets/app.css?v=4">
+<link rel="stylesheet" href="assets/app.css?v=5">
 </head>
 <body>
 
@@ -17,10 +17,19 @@
 <div id="gate">
   <div class="gate-card">
     <div class="brand">
-      <div class="logo-mark">◈</div>
+      <div class="logo-mark" style="width:42px;height:42px;flex:0 0 42px;border-radius:12px">
+        <svg viewBox="0 0 64 64" width="30" height="30" aria-hidden="true">
+          <defs><linearGradient id="lgGate" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#30C5FF"/><stop offset="1" stop-color="#7db8ff"/>
+          </linearGradient></defs>
+          <ellipse cx="32" cy="34" rx="26" ry="10.5" fill="none" stroke="#30C5FF" stroke-width="3" transform="rotate(-18 32 34)" opacity=".8"/>
+          <path d="M32 12c2.6 0 4.9 1.6 5.8 4l13 33c1 2.6-.9 5.4-3.7 5.4h-2.6c-2.4 0-4.5-1.5-5.3-3.7L32 31.8l-7.2 18.9c-.8 2.2-2.9 3.7-5.3 3.7h-2.6c-2.8 0-4.7-2.8-3.7-5.4l13-33c.9-2.4 3.2-4 5.8-4z" fill="url(#lgGate)"/>
+          <circle cx="53" cy="22" r="4.5" fill="#30C5FF"/>
+        </svg>
+      </div>
       <div>
-        <h1>AilOS</h1>
-        <p class="sub">Дотоод систем</p>
+        <h1>Ail<span class="brand-os">OS</span></h1>
+        <p class="sub brand-tag">Smarter&nbsp;&nbsp;Together</p>
       </div>
     </div>
     <label>Нэвтрэх нэр / И-мэйл</label>
@@ -42,8 +51,17 @@
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="logo">
-      <div class="logo-mark">◈</div>
-      <div class="logo-txt"><b>AilOS</b><span>Дотоод систем</span></div>
+      <div class="logo-mark">
+        <svg viewBox="0 0 64 64" width="22" height="22" aria-hidden="true">
+          <defs><linearGradient id="lgSide" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#30C5FF"/><stop offset="1" stop-color="#7db8ff"/>
+          </linearGradient></defs>
+          <ellipse cx="32" cy="34" rx="26" ry="10.5" fill="none" stroke="#30C5FF" stroke-width="3" transform="rotate(-18 32 34)" opacity=".8"/>
+          <path d="M32 12c2.6 0 4.9 1.6 5.8 4l13 33c1 2.6-.9 5.4-3.7 5.4h-2.6c-2.4 0-4.5-1.5-5.3-3.7L32 31.8l-7.2 18.9c-.8 2.2-2.9 3.7-5.3 3.7h-2.6c-2.8 0-4.7-2.8-3.7-5.4l13-33c.9-2.4 3.2-4 5.8-4z" fill="url(#lgSide)"/>
+          <circle cx="53" cy="22" r="4.5" fill="#30C5FF"/>
+        </svg>
+      </div>
+      <div class="logo-txt"><b>Ail<span class="brand-os">OS</span></b><span>Smarter Together</span></div>
     </div>
     <nav class="nav">
       <div class="nav-item active" data-page="dashboard"><span class="ic">▦</span> Хяналтын самбар</div>
@@ -532,12 +550,12 @@
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="assets/js/store.js?v=4"></script>
-<script src="assets/js/ai.js?v=4"></script>
-<script src="assets/js/charts.js?v=4"></script>
-<script src="assets/js/io.js?v=4"></script>
-<script src="assets/js/map.js?v=4"></script>
-<script src="assets/js/ui.js?v=4"></script>
-<script src="assets/js/main.js?v=4"></script>
+<script src="assets/js/store.js?v=5"></script>
+<script src="assets/js/ai.js?v=5"></script>
+<script src="assets/js/charts.js?v=5"></script>
+<script src="assets/js/io.js?v=5"></script>
+<script src="assets/js/map.js?v=5"></script>
+<script src="assets/js/ui.js?v=5"></script>
+<script src="assets/js/main.js?v=5"></script>
 </body>
 </html>
