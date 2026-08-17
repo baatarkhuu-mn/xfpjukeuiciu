@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
-<link rel="stylesheet" href="assets/app.css?v=12">
+<link rel="stylesheet" href="assets/app.css?v=13">
 </head>
 <body>
 
@@ -17,23 +17,8 @@
 <div id="gate">
   <div class="gate-card">
     <div class="brand brand-vert">
-      <svg class="brand-mark" viewBox="0 0 64 64" width="128" height="128" aria-hidden="true">
-        <defs>
-          <linearGradient id="gA" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#30C5FF"/><stop offset=".55" stop-color="#0E6BFF"/><stop offset="1" stop-color="#0A3D91"/>
-          </linearGradient>
-          <linearGradient id="gO" x1="0" y1="1" x2="1" y2="0">
-            <stop offset="0" stop-color="#0E6BFF"/><stop offset="1" stop-color="#30C5FF"/>
-          </linearGradient>
-          <clipPath id="gC"><polygon points="0,28 0,64 46,64"/></clipPath>
-        </defs>
-        <ellipse cx="32" cy="33" rx="29" ry="12.5" fill="none" stroke="url(#gO)" stroke-width="4.6" transform="rotate(-22 32 33)" opacity=".9"/>
-        <path d="M32 5c3.4 0 6.4 2.1 7.6 5.3L53.2 46c1.3 3.4-1.2 7-4.9 7h-3.3c-3.1 0-5.9-2-7-4.9L32 32.9l-6 15.2c-1.1 2.9-3.9 4.9-7 4.9h-3.3c-3.7 0-6.2-3.6-4.9-7l13.6-35.7C25.6 7.1 28.6 5 32 5z" fill="url(#gA)"/>
-        <g clip-path="url(#gC)"><ellipse cx="32" cy="33" rx="29" ry="12.5" fill="none" stroke="url(#gO)" stroke-width="4.6" transform="rotate(-22 32 33)"/></g>
-        <circle cx="57.2" cy="21.4" r="5.2" fill="url(#gO)"/>
-      </svg>
-      <h1 class="wm">Ail<span class="o">O</span>S</h1>
-      <p class="sub brand-tag">Smarter Together</p>
+      <img src="assets/logo.png?v=13" alt="AilOS — Smarter Together" width="260"
+        style="display:block;max-width:80%;height:auto;mix-blend-mode:multiply">
     </div>
     <label>Нэвтрэх нэр / И-мэйл</label>
     <input id="gu" type="text" autocomplete="username" placeholder="admin">
@@ -53,24 +38,9 @@
 
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
-    <div class="logo">
-      <svg class="brand-mark" viewBox="0 0 64 64" width="46" height="46" aria-hidden="true">
-        <defs>
-          <linearGradient id="sA" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#30C5FF"/><stop offset=".55" stop-color="#0E6BFF"/><stop offset="1" stop-color="#0A3D91"/>
-          </linearGradient>
-          <linearGradient id="sO" x1="0" y1="1" x2="1" y2="0">
-            <stop offset="0" stop-color="#0E6BFF"/><stop offset="1" stop-color="#30C5FF"/>
-          </linearGradient>
-          <clipPath id="sC"><polygon points="0,28 0,64 46,64"/></clipPath>
-        </defs>
-        <ellipse cx="32" cy="33" rx="29" ry="12.5" fill="none" stroke="url(#sO)" stroke-width="4.6" transform="rotate(-22 32 33)" opacity=".9"/>
-        <path d="M32 5c3.4 0 6.4 2.1 7.6 5.3L53.2 46c1.3 3.4-1.2 7-4.9 7h-3.3c-3.1 0-5.9-2-7-4.9L32 32.9l-6 15.2c-1.1 2.9-3.9 4.9-7 4.9h-3.3c-3.7 0-6.2-3.6-4.9-7l13.6-35.7C25.6 7.1 28.6 5 32 5z" fill="url(#sA)"/>
-        <g clip-path="url(#sC)"><ellipse cx="32" cy="33" rx="29" ry="12.5" fill="none" stroke="url(#sO)" stroke-width="4.6" transform="rotate(-22 32 33)"/></g>
-        <circle cx="57.2" cy="21.4" r="5.2" fill="url(#sO)"/>
-      </svg>
-      <div class="brand-div" style="height:36px"></div>
-      <div class="logo-txt"><b class="wm">Ail<span class="o">O</span>S</b><span>Smarter Together</span></div>
+    <div class="logo" style="justify-content:center">
+      <img src="assets/logo.png?v=13" alt="AilOS" width="158"
+        style="display:block;height:auto;mix-blend-mode:multiply">
     </div>
     <nav class="nav">
       <div class="nav-item active" data-page="dashboard"><span class="ic">▦</span> Хяналтын самбар</div>
@@ -560,12 +530,12 @@
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="assets/js/store.js?v=12"></script>
-<script src="assets/js/ai.js?v=12"></script>
-<script src="assets/js/charts.js?v=12"></script>
-<script src="assets/js/io.js?v=12"></script>
-<script src="assets/js/map.js?v=12"></script>
-<script src="assets/js/ui.js?v=12"></script>
-<script src="assets/js/main.js?v=12"></script>
+<script src="assets/js/store.js?v=13"></script>
+<script src="assets/js/ai.js?v=13"></script>
+<script src="assets/js/charts.js?v=13"></script>
+<script src="assets/js/io.js?v=13"></script>
+<script src="assets/js/map.js?v=13"></script>
+<script src="assets/js/ui.js?v=13"></script>
+<script src="assets/js/main.js?v=13"></script>
 </body>
 </html>
