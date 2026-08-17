@@ -113,7 +113,8 @@ a{color:var(--accent);text-decoration:none}
   display:grid;place-items:center;font-size:16px;
   box-shadow:0 4px 14px rgba(10,61,145,.35);
 }
-.logo-txt b{font-size:17px;font-weight:700;letter-spacing:-.3px;display:block;color:var(--ink)}
+.logo{padding:20px 18px 18px}
+.logo-txt b{font-size:20px;font-weight:750;letter-spacing:-.4px;display:block;color:var(--ink)}
 .logo-txt b .o{font-size:inherit;letter-spacing:inherit;text-transform:none;color:var(--accent)}
 .logo-txt > span{font-size:9px;color:var(--text-mute);letter-spacing:2px;text-transform:uppercase}
 .brand-os{color:var(--accent)}
