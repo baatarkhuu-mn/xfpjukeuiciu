@@ -75,20 +75,22 @@
     const $ = id => document.getElementById(id);
     fillSelects();
 
-    const deb = debounce(() => { readFilters(); refresh(); }, 220);
+    /* Шүүлтүүр өөрчлөгдөх бүрд илэрцийн бүс рүү автоматаар шилжинэ */
+    const apply = () => { readFilters(); refresh(); fit(); };
+    const deb = debounce(apply, 260);
     $('mapQ').addEventListener('input', deb);
     ['mapDist', 'mapKhoroo', 'mapStreet', 'mapSup', 'mapStaff', 'mapProg'].forEach(id => {
       $(id).addEventListener('change', () => {
         if (id === 'mapDist') { fillKhoroo(); fillStreet(); }
         if (id === 'mapKhoroo') fillStreet();
-        readFilters(); refresh();
+        apply();
       });
     });
     $('mapProb').addEventListener('input', e => {
       $('mapProbV').textContent = e.target.value + '%';
       deb();
     });
-    $('mapUncontacted').addEventListener('change', () => { readFilters(); refresh(); });
+    $('mapUncontacted').addEventListener('change', apply);
 
     $('mvMarkers').onclick = () => setMode('markers');
     $('mvHeat').onclick = () => setMode('heat');
@@ -421,7 +423,7 @@
   function fit() {
     if (!ready) return;
     const pts = rows.filter(h => h.lat && h.lng).map(h => [h.lat, h.lng]);
-    if (pts.length) map.fitBounds(L.latLngBounds(pts).pad(0.08));
+    if (pts.length) map.fitBounds(L.latLngBounds(pts).pad(0.08), { maxZoom: 17, animate: false });
     else map.setView([47.9185, 106.9175], 12);
   }
 
