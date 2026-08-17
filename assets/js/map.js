@@ -274,7 +274,7 @@
           '<span style="color:#51607a">Сонгогч:</span> <b>' + fmt(s.voters) + '</b><br>' +
           '<span style="color:#51607a">Дэмжлэг:</span> <b style="color:' + col + '">' +
           Math.round(s.supportRate * 100) + '%</b> · ' +
-          '<span style="color:#51607a">AI:</span> <b>' + Math.round(s.avgProb * 100) + '%</b> · ' +
+          '<span style="color:#51607a">Магадлал:</span> <b>' + Math.round(s.avgProb * 100) + '%</b> · ' +
           '<span style="color:#51607a">Хамрагдалт:</span> <b>' + Math.round(s.coverage * 100) + '%</b>' +
           '<button class="mp-dist" data-d="' + esc(name) + '" style="margin-top:10px;width:100%;padding:6px;' +
           'border-radius:8px;background:' + col + ';color:#fff;font-weight:600;font-size:12px;cursor:pointer">' +
@@ -324,7 +324,7 @@
           '<span style="color:#51607a">Иргэн:</span> <b>' + g.people + '</b><br>' +
           '<span style="color:#51607a">Дэмжлэг:</span> <b style="color:' + col + '">' +
           Math.round(g.supportRate * 100) + '%</b> · ' +
-          '<span style="color:#51607a">AI:</span> <b>' + Math.round(g.avgProb * 100) + '%</b><br>' +
+          '<span style="color:#51607a">Магадлал:</span> <b>' + Math.round(g.avgProb * 100) + '%</b><br>' +
           '<span style="color:#51607a">Хамрагдалт:</span> <b>' + Math.round(g.coverage * 100) + '%</b>'
         );
         c.addTo(khLayer);
@@ -371,7 +371,7 @@
       '<div style="color:#8493ab;font-size:11.5px;margin:2px 0 9px">' + esc(h.address || '') + '</div>' +
       '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px">' +
       '<span class="tag ' + sup.cls + '">' + sup.name + '</span>' +
-      '<span class="tag ' + s.segment.cls + '">AI ' + s.pct + '%</span>' +
+      '<span class="tag ' + s.segment.cls + '">Дэмжих ' + s.pct + '%</span>' +
       (open ? '<span class="tag t-s1">' + open + ' гомдол</span>' : '') + '</div>' +
       '<div style="font-size:12px;line-height:1.75;color:#51607a">' +
       'Ам бүл: <b style="color:#101827">' + (h.family_size || 0) + '</b> · Сонгогч: <b style="color:#101827">' +
@@ -397,7 +397,7 @@
       row('Иргэн', fmt(s.people)) +
       row('Сонгогч', fmt(s.voters)) +
       row('Дэмжигч', fmt(s.supporters) + ' (' + Math.round(s.supportRate * 100) + '%)') +
-      row('Дундаж AI магадлал', Math.round(s.avgProb * 100) + '%') +
+      row('Дундаж магадлал', Math.round(s.avgProb * 100) + '%') +
       row('Хамрагдалт', Math.round(s.coverage * 100) + '%') +
       '<div style="height:10px"></div>' +
       row('Бат бөх', fmt(seg.core), '#0d8f63') +

@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
-<link rel="stylesheet" href="assets/app.css?v=14">
+<link rel="stylesheet" href="assets/app.css?v=15">
 </head>
 <body>
 
@@ -17,7 +17,7 @@
 <div id="gate">
   <div class="gate-card">
     <div class="brand brand-vert">
-      <img src="assets/logo.png?v=14" alt="AilOS — Smarter Together" width="260"
+      <img src="assets/logo.png?v=15" alt="AilOS — Smarter Together" width="260"
         style="display:block;max-width:80%;height:auto;mix-blend-mode:multiply">
     </div>
     <label>Нэвтрэх нэр / И-мэйл</label>
@@ -38,7 +38,7 @@
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="logo" style="justify-content:center">
-      <img src="assets/logo.png?v=14" alt="AilOS" width="158"
+      <img src="assets/logo.png?v=15" alt="AilOS" width="158"
         style="display:block;height:auto;mix-blend-mode:multiply">
     </div>
     <nav class="nav">
@@ -51,16 +51,16 @@
       <div class="nav-item" data-page="programs">Төсөл хөтөлбөр</div>
       <div class="nav-item" data-page="issues">Санал гомдол <span class="badge" id="bdg-is">0</span></div>
 
-      <div class="nav-sec">Хиймэл оюун</div>
-      <div class="nav-item" data-page="ai">Дэмжлэгийн шинжилгээ</div>
-      <div class="nav-item" data-page="strategy">Хорооны стратеги</div>
+      <div class="nav-sec">Шинжилгээ</div>
+      <div class="nav-item" data-page="ai">Дэмжих магадлал</div>
+      <div class="nav-item" data-page="strategy">Хорооны зөвлөмж</div>
 
       <div class="nav-sec">Багийн хяналт</div>
       <div class="nav-item" data-page="team">Багийн гүйцэтгэл <span class="badge" id="bdg-st">0</span></div>
       <div class="nav-item" data-page="tasks">Даалгавар <span class="badge" id="bdg-tk">0</span></div>
 
       <div class="nav-sec">Систем</div>
-      <div class="nav-item" data-page="io">Импорт / Экспорт</div>
+      <div class="nav-item" data-page="io">Дата оруулах / татах</div>
       <div class="nav-item" data-page="settings">Тохиргоо</div>
     </nav>
     <div class="userbox">
@@ -113,7 +113,7 @@
           <div class="card-h"><h3>Дүүргийн харьцуулалт</h3><div class="r">
             <select class="inp sm" id="distMetric" style="padding:6px 26px 6px 10px;font-size:12px">
               <option value="supportRate">Дэмжлэгийн хувь</option>
-              <option value="avgProb">AI магадлал</option>
+              <option value="avgProb">Дэмжих магадлал</option>
               <option value="coverage">Хамрагдалт</option>
               <option value="households">Өрхийн тоо</option>
             </select></div>
@@ -122,7 +122,7 @@
         </div>
         <div class="card">
           <div class="card-h">
-            <div><h3>Тэргүүлэх зорилтот өрхүүд</h3></div>
+            <div><h3>Эхэлж очих өрхүүд</h3></div>
             <div class="r"><button class="btn sm" onclick="CivicUI.go('ai')">Бүгдийг харах</button></div>
           </div>
           <div id="dashPriority"></div>
@@ -171,7 +171,7 @@
               <select class="inp" id="mapStaff"><option value="">Бүгд</option></select></div>
             <div class="field"><label class="fl">Хөтөлбөрийн оролцоо</label>
               <select class="inp" id="mapProg"><option value="">Бүгд</option></select></div>
-            <div class="field"><label class="fl">AI магадлал ≥ <b id="mapProbV">0%</b></label>
+            <div class="field"><label class="fl">Дэмжих магадлал ≥ <b id="mapProbV">0%</b></label>
               <input type="range" id="mapProb" min="0" max="100" value="0" style="width:100%"></div>
             <div class="chips" style="margin-bottom:12px">
               <label class="chip pick"><input type="checkbox" id="mapUncontacted" style="margin-right:5px">Холбогдоогүй</label>
@@ -201,6 +201,7 @@
         <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
         <div><h1>Өрхийн бүртгэл</h1><div class="sub" id="hhSub">—</div></div>
         <div class="topbar-right">
+          <button class="btn" id="hhImport">Excel импорт</button>
           <button class="btn" id="hhExport">Экспорт</button>
           <button class="btn danger hide" id="hhDelSel">Устгах (<span id="hhSelN">0</span>)</button>
           <button class="btn primary" id="hhAdd">+ Шинэ өрх</button>
@@ -217,7 +218,7 @@
           <select class="inp" id="hhSup"><option value="">Бүх түвшин</option></select>
           <select class="inp" id="hhParty"><option value="">Бүх нам</option></select>
           <select class="inp" id="hhStaff"><option value="">Бүх ухуулагч</option></select>
-          <select class="inp" id="hhSeg"><option value="">Бүх AI сегмент</option></select>
+          <select class="inp" id="hhSeg"><option value="">Бүх ангилал</option></select>
         </div>
       </div>
       <div class="card pad0" style="margin-top:14px">
@@ -232,6 +233,7 @@
         <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
         <div><h1>Иргэдийн бүртгэл</h1><div class="sub" id="ctSub">—</div></div>
         <div class="topbar-right">
+          <button class="btn" id="ctImport">Excel импорт</button>
           <button class="btn" id="ctExport">Экспорт</button>
         </div>
       </div>
@@ -292,7 +294,7 @@
     <section class="page" data-page="ai">
       <div class="topbar">
         <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
-        <div><h1>Дэмжлэгийн шинжилгээ</h1></div>
+        <div><h1>Дэмжих магадлал</h1></div>
         <div class="topbar-right">
           <select class="inp" id="aiDist"><option value="">Бүх дүүрэг</option></select>
           <select class="inp" id="aiSeg"><option value="">Бүх сегмент</option></select>
@@ -303,11 +305,11 @@
       <div class="grid g2">
         <div class="card"><div class="card-h"><div><h3>Магадлалын тархалт</h3><div class="sub">Өрхийн тоо / 10% тутам</div></div></div>
           <div id="aiHist"></div></div>
-        <div class="card"><div class="card-h"><div><h3>Загварын хүчин зүйлс</h3><div class="sub">Дундаж хувь нэмэр</div></div></div>
+        <div class="card"><div class="card-h"><div><h3>Нөлөөлөх хүчин зүйлс</h3><div class="sub">Дундаж хувь нэмэр</div></div></div>
           <div id="aiFactors"></div></div>
       </div>
       <div class="card pad0" style="margin-top:14px">
-        <div class="card-h"><div><h3>Тэргүүлэх зорилтот жагсаалт</h3>
+        <div class="card-h"><div><h3>Эхэлж очих дараалал</h3>
           <div class="sub">Хөрвүүлэх боломж × саналын жин × датаны хуучралт</div></div></div>
         <div class="tbl-wrap"><table class="tbl" id="aiTable"></table></div>
         <div class="pager" id="aiPager"></div>
@@ -318,7 +320,7 @@
     <section class="page" data-page="strategy">
       <div class="topbar">
         <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
-        <div><h1>Хорооны стратеги</h1></div>
+        <div><h1>Хорооны зөвлөмж</h1></div>
         <div class="topbar-right">
           <select class="inp" id="stDist"><option value="">Бүх дүүрэг</option></select>
           <button class="btn" id="stExport">Экспорт</button>
@@ -355,7 +357,7 @@
         <div><h1>Даалгавар</h1><div class="sub" id="tkSub">Штабын дотоод ажлын хяналт</div></div>
         <div class="topbar-right">
           <button class="btn" id="tkViewTable">Хүснэгт</button>
-          <button class="btn" id="tkViewKanban">Канбан</button>
+          <button class="btn" id="tkViewKanban">Самбар</button>
           <select class="inp" id="tkOwner"><option value="">Бүх хариуцагч</option></select>
           <button class="btn primary" id="tkAdd">+ Шинэ даалгавар</button>
         </div>
@@ -368,7 +370,7 @@
     <section class="page" data-page="io">
       <div class="topbar">
         <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
-        <div><h1>Импорт / Экспорт</h1></div>
+        <div><h1>Дата оруулах / татах</h1></div>
       </div>
 
       <div class="steps" id="ioSteps">
@@ -460,7 +462,7 @@
         </div>
 
         <div class="card">
-          <div class="card-h"><div><h3>AI загварын жин</h3>
+          <div class="card-h"><div><h3>Магадлалын жин</h3>
             <div class="sub">Хүчин зүйл тус бүрийн нөлөөг тохируулна</div></div>
             <div class="r"><button class="btn sm" id="wReset">Анхны утга</button></div></div>
           <div id="wSliders"></div>
@@ -529,12 +531,12 @@
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="assets/js/store.js?v=14"></script>
-<script src="assets/js/ai.js?v=14"></script>
-<script src="assets/js/charts.js?v=14"></script>
-<script src="assets/js/io.js?v=14"></script>
-<script src="assets/js/map.js?v=14"></script>
-<script src="assets/js/ui.js?v=14"></script>
-<script src="assets/js/main.js?v=14"></script>
+<script src="assets/js/store.js?v=15"></script>
+<script src="assets/js/ai.js?v=15"></script>
+<script src="assets/js/charts.js?v=15"></script>
+<script src="assets/js/io.js?v=15"></script>
+<script src="assets/js/map.js?v=15"></script>
+<script src="assets/js/ui.js?v=15"></script>
+<script src="assets/js/main.js?v=15"></script>
 </body>
 </html>

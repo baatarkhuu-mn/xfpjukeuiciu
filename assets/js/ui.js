@@ -162,7 +162,7 @@
         note: '<b class="up">' + pc(s.supportRate) + '</b> нийт өрхийн'
       }),
       kpi({
-        label: 'AI дундаж магадлал', value: pc(s.avgProb), icon: '', color: '#0e6bff',
+        label: 'Дундаж дэмжих магадлал', value: pc(s.avgProb), icon: '', color: '#0e6bff',
         tint: 'rgba(61,125,255,.22)', icbg: 'rgba(61,125,255,.15)',
         spark: tr.map(t => Math.round(t.rate * 100)),
         note: ''
@@ -276,7 +276,7 @@
       opts($('hhParty'), K().PARTIES, 'Бүх нам');
       opts($('hhStaff'), st.db.staff.map(s => ({ v: s.id, t: s.name })), 'Бүх ухуулагч');
       opts($('hhSeg'), [['core', 'Бат бөх дэмжигч'], ['lean', 'Хазайсан дэмжигч'], ['swing', 'Эргэлзэгч'],
-      ['soft-opp', 'Хазайсан эсрэг'], ['opp', 'Эсрэг']].map(x => ({ v: x[0], t: x[1] })), 'Бүх AI сегмент');
+      ['soft-opp', 'Хазайсан эсрэг'], ['opp', 'Эсрэг']].map(x => ({ v: x[0], t: x[1] })), 'Бүх ангилал');
       $('hhDist').dataset.f = '1';
       const upd = () => { readHhFilters(); PG.hhPager && (PG.hhPager.p = 1); drawHh(); };
       ['hhDist', 'hhKhoroo', 'hhSup', 'hhParty', 'hhStaff', 'hhSeg'].forEach(id => $(id).onchange = () => {
@@ -285,6 +285,7 @@
       });
       let t; $('hhQ').oninput = () => { clearTimeout(t); t = setTimeout(upd, 220); };
       $('hhAdd').onclick = () => householdForm(null);
+      $('hhImport').onclick = () => go('io');
       $('hhExport').onclick = () => { IO().exportAs('households-xlsx', currentHh()); toast('Excel татаж байна', 'ok'); };
       $('hhDelSel').onclick = deleteSelected;
       opts($('hhKhoroo'), st.khoroosOf('').map(k => ({ v: k, t: k + '-р хороо' })), 'Бүх хороо');
@@ -323,7 +324,7 @@
     $('hhSub').textContent = fmt(rows.length) + ' өрх · ' + fmt(st.stats(rows).people) + ' иргэн';
     const cols = [
       ['', ''], ['code', 'Код'], ['head', 'Өрхийн тэргүүн'], ['khoroo', 'Байршил'],
-      ['family_size', 'Ам бүл'], ['support', 'Байр суурь'], ['ai', 'AI магадлал'],
+      ['family_size', 'Ам бүл'], ['support', 'Байр суурь'], ['ai', 'Дэмжих магадлал'],
       ['party', 'Нам'], ['assigned_to', 'Хариуцсан'], ['last_contact', 'Сүүлд'], ['', '']
     ];
     let html = '<thead><tr>' +
@@ -409,7 +410,7 @@
     const body =
       /* AI */
       '<div class="aibox">' +
-      '<div class="hd"><span style="color:#0e6bff">✦</span><b>Дэмжих магадлалын шинжилгээ</b>' +
+      '<div class="hd"><span style="color:#0e6bff">✦</span><b>Дэмжих магадлал</b>' +
       '<span class="tag ' + s.segment.cls + '">' + esc(s.segment.name) + '</span></div>' +
       '<div class="gauge">' + C().gauge(s.prob, s.segment.color, 96) +
       '<div><div class="gv" style="color:' + s.segment.color + '">' + s.pct + '%</div>' +
@@ -721,6 +722,7 @@
       ['ctDist', 'ctGender', 'ctAge', 'ctSup'].forEach(id => $(id).onchange = drawCt);
       let t; $('ctQ').oninput = () => { clearTimeout(t); t = setTimeout(drawCt, 220); };
       $('ctExport').onclick = () => { IO().exportAs('citizens-xlsx'); toast('Excel татаж байна', 'ok'); };
+      $('ctImport').onclick = () => go('io');
     }
     drawCt();
   }
@@ -801,7 +803,7 @@
         pc(rows.length / total) + '</div>' +
         C().progress(rows.length / total, '#0e6bff') +
         '<div style="margin-top:14px;padding-top:13px;border-top:1px solid var(--border-soft);font-size:12.5px">' +
-        '<span style="color:var(--text-mute)">AI магадлалын зөрүү: </span>' +
+        '<span style="color:var(--text-mute)">Дэмжих магадлалын зөрүү: </span>' +
         '<b style="color:' + (lift >= 0 ? 'var(--green)' : 'var(--red)') + '">' +
         (lift >= 0 ? '+' : '') + Math.round(lift * 100) + ' нэгж</b>' +
         '<div style="color:var(--text-mute);font-size:11.5px;margin-top:4px">' +
@@ -906,7 +908,7 @@
     if (!$('aiDist').dataset.f) {
       opts($('aiDist'), st.districts(), 'Бүх дүүрэг');
       opts($('aiSeg'), [['core', 'Бат бөх дэмжигч'], ['lean', 'Хазайсан дэмжигч'], ['swing', 'Эргэлзэгч'],
-      ['soft-opp', 'Хазайсан эсрэг'], ['opp', 'Эсрэг']].map(x => ({ v: x[0], t: x[1] })), 'Бүх сегмент');
+      ['soft-opp', 'Хазайсан эсрэг'], ['opp', 'Эсрэг']].map(x => ({ v: x[0], t: x[1] })), 'Бүх ангилал');
       $('aiDist').dataset.f = '1';
       $('aiDist').onchange = drawAi; $('aiSeg').onchange = drawAi;
       $('aiExport').onclick = () => { IO().exportAs('ai-xlsx'); toast('AI жагсаалт татаж байна', 'ok'); };
@@ -926,7 +928,7 @@
     const s = st.stats(base);
 
     $('aiKpis').innerHTML = [
-      kpi({ label: 'Дундаж магадлал', value: pc(s.avgProb), icon: '', color: '#0e6bff', tint: 'rgba(14,107,255,.24)', icbg: 'rgba(14,107,255,.16)', note: fmt(base.length) + ' өрх дээр тооцсон' }),
+      kpi({ label: 'Дундаж дэмжих магадлал', value: pc(s.avgProb), icon: '', color: '#0e6bff', tint: 'rgba(14,107,255,.24)', icbg: 'rgba(14,107,255,.16)', note: fmt(base.length) + ' өрх дээр тооцсон' }),
       kpi({ label: 'Бат бөх дэмжигч', value: fmt(segCount.core), icon: '', color: '#0d8f63', tint: 'rgba(13,143,99,.22)', icbg: 'rgba(13,143,99,.15)', note: pc(segCount.core / Math.max(1, base.length)) }),
       kpi({ label: 'Эргэлзэгч', value: fmt(segCount.swing), icon: '', color: '#b07d06', tint: 'rgba(176,125,6,.22)', icbg: 'rgba(176,125,6,.15)', note: '' }),
       kpi({ label: 'Эсрэг талд', value: fmt(segCount.opp + segCount['soft-opp']), icon: '', color: '#d92549', tint: 'rgba(217,37,73,.2)', icbg: 'rgba(217,37,73,.14)', note: '' }),
@@ -958,7 +960,7 @@
 
     const pageRows = slice('aiPager', pr);
     $('aiTable').innerHTML = '<thead><tr><th>#</th><th>Өрх</th><th>Байршил</th><th class="num">Сонгогч</th>' +
-      '<th>AI магадлал</th><th>Сегмент</th><th>Өгөөж</th><th>Гол хүчин зүйл</th><th></th></tr></thead><tbody>' +
+      '<th>Дэмжих магадлал</th><th>Ангилал</th><th>Ач холбогдол</th><th>Гол хүчин зүйл</th><th></th></tr></thead><tbody>' +
       (pageRows.length ? pageRows.map(function (p, i) {
         const idx = (PG.aiPager ? (PG.aiPager.p - 1) * PG.aiPager.per : 0) + i + 1;
         const f0 = p.s.factors[0];
@@ -1001,7 +1003,7 @@
     let rows = AI().khorooStrategy();
     if (dist) rows = rows.filter(r => r.district === dist);
     $('stTable').innerHTML = '<thead><tr><th>#</th><th>Хороо</th><th class="num">Өрх</th><th class="num">Сонгогч</th>' +
-      '<th>Дэмжлэг</th><th>AI магадлал</th><th>Хамрагдалт</th><th>Эргэлзэгч</th>' +
+      '<th>Дэмжлэг</th><th>Дэмжих магадлал</th><th>Хамрагдалт</th><th>Эргэлзэгч</th>' +
       '<th>Боломж</th><th>Зөвлөмж</th><th></th></tr></thead><tbody>' +
       rows.map(function (k, i) {
         const col = k.avgProb >= .6 ? '#0d8f63' : k.avgProb >= .45 ? '#b07d06' : '#d92549';
