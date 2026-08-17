@@ -27,6 +27,17 @@
       preferCanvas: true
     });
 
+    /* Google давхаргууд — хамгийн шинэ зураглал (албан бус tile endpoint,
+       API түлхүүр шаардахгүй; их ачаалалтай бол Maps API түлхүүр рүү шилжинэ) */
+    const gRoad = L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&hl=mn&x={x}&y={y}&z={z}', {
+      subdomains: '0123', maxZoom: 21, attribution: '&copy; Google'
+    });
+    const gHybrid = L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&hl=mn&x={x}&y={y}&z={z}', {
+      subdomains: '0123', maxZoom: 21, attribution: '&copy; Google'
+    });
+    const gSat = L.tileLayer('https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      subdomains: '0123', maxZoom: 21, attribution: '&copy; Google'
+    });
     const light = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd', maxZoom: 20
@@ -34,12 +45,14 @@
     const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 19
     });
-    const sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles &copy; Esri', maxZoom: 19
-    });
-    light.addTo(map);
-    L.control.layers({ 'Цайвар (дэлгэрэнгүй)': light, 'Стандарт': osm, 'Хиймэл дагуул': sat }, null,
-      { position: 'topleft' }).addTo(map);
+    gRoad.addTo(map);
+    L.control.layers({
+      'Google — зам': gRoad,
+      'Google — эрлийз (дагуул + нэр)': gHybrid,
+      'Google — хиймэл дагуул': gSat,
+      'Цайвар (CARTO)': light,
+      'OpenStreetMap': osm
+    }, null, { position: 'topleft' }).addTo(map);
     L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map);
 
     cluster = L.markerClusterGroup({
