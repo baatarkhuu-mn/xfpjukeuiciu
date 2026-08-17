@@ -93,16 +93,70 @@
     $('mvMarkers').onclick = () => setMode('markers');
     $('mvHeat').onclick = () => setMode('heat');
     $('mvKhoroo').onclick = () => setMode('khoroo');
+    $('mvDistrict').onclick = () => setMode('district');
     $('mvFit').onclick = fit;
     $('mvExport').onclick = () => {
       global.CivicIO.exportAs('households-xlsx', rows);
       global.CivicUI.toast(rows.length + ' өрхийг татаж байна', 'ok');
     };
 
-    document.getElementById('mapLegend').innerHTML =
-      '<div class="t">Дэмжлэгийн түвшин</div>' +
-      [5, 4, 3, 2, 1, 0].map(k => '<div class="row"><i class="dot" style="background:' +
-        K().SUPPORT[k].color + '"></i>' + K().SUPPORT[k].name + '</div>').join('');
+    updateLegend();
+  }
+
+  /* Дүүрэг тус бүрийн ялгах өнгө */
+  const DIST_COLORS = ['#0e6bff', '#8b5cf6', '#0d9f6e', '#d97706', '#dc2626',
+    '#0891b2', '#be185d', '#65a30d', '#475569', '#7c3aed', '#b45309'];
+  function distColor(name) {
+    const list = S().districts();
+    const i = list.indexOf(name);
+    return DIST_COLORS[(i < 0 ? 0 : i) % DIST_COLORS.length];
+  }
+
+  function updateLegend() {
+    const el = document.getElementById('mapLegend');
+    if (!el) return;
+    if (mode === 'district') {
+      el.innerHTML = '<div class="t">Дүүргийн бүс</div>' +
+        S().districts().map(d => '<div class="row"><i class="dot" style="background:' +
+          distColor(d) + '"></i>' + esc(d) + '</div>').join('');
+    } else if (mode === 'khoroo') {
+      el.innerHTML = '<div class="t">Дундаж магадлал</div>' +
+        [['≥72%', '#0d8f63'], ['58–72%', '#5cb85c'], ['44–58%', '#b07d06'],
+        ['30–44%', '#e2701a'], ['<30%', '#d92549']].map(x =>
+          '<div class="row"><i class="dot" style="background:' + x[1] + '"></i>' + x[0] + '</div>').join('');
+    } else {
+      el.innerHTML = '<div class="t">Дэмжлэгийн түвшин</div>' +
+        [5, 4, 3, 2, 1, 0].map(k => '<div class="row"><i class="dot" style="background:' +
+          K().SUPPORT[k].color + '"></i>' + K().SUPPORT[k].name + '</div>').join('');
+    }
+  }
+
+  /* ---------- Convex hull (Andrew's monotone chain) ---------- */
+  function hull(pts) {
+    if (pts.length < 3) return pts;
+    const p = pts.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+    const lower = [];
+    for (const pt of p) {
+      while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], pt) <= 0) lower.pop();
+      lower.push(pt);
+    }
+    const upper = [];
+    for (let i = p.length - 1; i >= 0; i--) {
+      const pt = p[i];
+      while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], pt) <= 0) upper.pop();
+      upper.push(pt);
+    }
+    lower.pop(); upper.pop();
+    return lower.concat(upper);
+  }
+  /* Хилийг төвөөс нь бага зэрэг тэлэх — цэгүүд яг ирмэг дээр давхцахгүй */
+  function expand(poly, f) {
+    if (poly.length < 3) return poly;
+    let cy = 0, cx = 0;
+    poly.forEach(p => { cy += p[0]; cx += p[1]; });
+    cy /= poly.length; cx /= poly.length;
+    return poly.map(p => [cy + (p[0] - cy) * f, cx + (p[1] - cx) * f]);
   }
 
   function fillSelects() {
@@ -199,6 +253,58 @@
         gradient: { 0.0: '#d92549', 0.35: '#e2701a', 0.5: '#b07d06', 0.7: '#5cb85c', 1.0: '#0d8f63' }
       }).addTo(map);
 
+    } else if (mode === 'district') {
+      if (map.hasLayer(cluster)) map.removeLayer(cluster);
+      if (!map.hasLayer(khLayer)) map.addLayer(khLayer);
+      const byDist = new Map();
+      rows.forEach(h => {
+        if (!byDist.has(h.district)) byDist.set(h.district, []);
+        byDist.get(h.district).push(h);
+      });
+      byDist.forEach(function (list, name) {
+        const col = distColor(name);
+        const pts = list.map(h => [h.lat, h.lng]);
+        const s = S().stats(list);
+        const popup =
+          '<b style="font-size:14px">' + esc(name) + ' дүүрэг</b><br>' +
+          '<span style="color:#51607a">Өрх:</span> <b>' + fmt(s.households) + '</b> · ' +
+          '<span style="color:#51607a">Иргэн:</span> <b>' + fmt(s.people) + '</b> · ' +
+          '<span style="color:#51607a">Сонгогч:</span> <b>' + fmt(s.voters) + '</b><br>' +
+          '<span style="color:#51607a">Дэмжлэг:</span> <b style="color:' + col + '">' +
+          Math.round(s.supportRate * 100) + '%</b> · ' +
+          '<span style="color:#51607a">AI:</span> <b>' + Math.round(s.avgProb * 100) + '%</b> · ' +
+          '<span style="color:#51607a">Хамрагдалт:</span> <b>' + Math.round(s.coverage * 100) + '%</b>' +
+          '<button class="mp-dist" data-d="' + esc(name) + '" style="margin-top:10px;width:100%;padding:6px;' +
+          'border-radius:8px;background:' + col + ';color:#fff;font-weight:600;font-size:12px;cursor:pointer">' +
+          'Энэ дүүргээр шүүх</button>';
+        let cy = 0, cx = 0;
+        pts.forEach(p => { cy += p[0]; cx += p[1]; });
+        cy /= pts.length; cx /= pts.length;
+        if (pts.length >= 3) {
+          const poly = L.polygon(expand(hull(pts), 1.06), {
+            color: col, weight: 2.5, fillColor: col, fillOpacity: 0.13, dashArray: '6 5'
+          });
+          poly.bindPopup(popup);
+          poly.on('popupopen', bindDistBtn);
+          poly.addTo(khLayer);
+        } else {
+          const c = L.circle([cy, cx], { radius: 500, color: col, weight: 2, fillColor: col, fillOpacity: 0.15 });
+          c.bindPopup(popup);
+          c.on('popupopen', bindDistBtn);
+          c.addTo(khLayer);
+        }
+        L.marker([cy, cx], {
+          icon: L.divIcon({
+            className: '',
+            html: '<div style="color:' + col + ';font-size:13px;font-weight:800;letter-spacing:.3px;' +
+              'text-shadow:0 0 4px #fff,0 0 9px #fff,0 0 14px #fff;white-space:nowrap;' +
+              'transform:translate(-50%,-50%)">' + esc(name) + '<div style="font-size:10.5px;font-weight:650;' +
+              'color:#51607a;text-align:center">' + fmt(s.households) + ' өрх</div></div>',
+            iconSize: [0, 0]
+          }), interactive: false
+        }).addTo(khLayer);
+      });
+
     } else { /* khoroo */
       if (map.hasLayer(cluster)) map.removeLayer(cluster);
       if (!map.hasLayer(khLayer)) map.addLayer(khLayer);
@@ -233,6 +339,19 @@
 
     updateStats();
     updateModeButtons();
+    updateLegend();
+  }
+
+  function bindDistBtn() {
+    const btn = document.querySelector('.mp-dist');
+    if (btn) btn.onclick = function () {
+      const sel = document.getElementById('mapDist');
+      sel.value = btn.dataset.d;
+      sel.dispatchEvent(new Event('change'));
+      map.closePopup();
+      setMode('markers');
+      fit();
+    };
   }
 
   function probColor(p) {
@@ -292,10 +411,11 @@
 
   function setMode(m) { mode = m; refresh(); }
   function updateModeButtons() {
-    [['mvMarkers', 'markers'], ['mvHeat', 'heat'], ['mvKhoroo', 'khoroo']].forEach(([id, m]) => {
-      const b = document.getElementById(id);
-      if (b) b.classList.toggle('primary', mode === m);
-    });
+    [['mvMarkers', 'markers'], ['mvHeat', 'heat'], ['mvKhoroo', 'khoroo'], ['mvDistrict', 'district']]
+      .forEach(([id, m]) => {
+        const b = document.getElementById(id);
+        if (b) b.classList.toggle('primary', mode === m);
+      });
   }
 
   function fit() {
@@ -305,6 +425,34 @@
     else map.setView([47.9185, 106.9175], 12);
   }
 
+  /* ---------- Өрхийн пин тэмдэглэгээ ---------- */
+  let focusPin = null;
+
+  function pinIcon(color) {
+    return L.divIcon({
+      className: '',
+      html: '<svg width="34" height="46" viewBox="0 0 34 46" style="filter:drop-shadow(0 3px 6px rgba(16,24,39,.4))">' +
+        '<path d="M17 1C8 1 1 8.1 1 17c0 11.5 16 28 16 28s16-16.5 16-28C33 8.1 26 1 17 1z" ' +
+        'fill="' + (color || '#0e6bff') + '" stroke="#fff" stroke-width="2.5"/>' +
+        '<circle cx="17" cy="16.5" r="6" fill="#fff"/></svg>',
+      iconSize: [34, 46], iconAnchor: [17, 45], popupAnchor: [0, -42]
+    });
+  }
+
+  function showPin(h) {
+    if (focusPin) { map.removeLayer(focusPin); focusPin = null; }
+    if (!h || h.lat == null || h.lng == null) return;
+    const s = AI().score(h);
+    focusPin = L.marker([h.lat, h.lng], { icon: pinIcon(s.segment.color), zIndexOffset: 900 });
+    focusPin.bindPopup(popupHtml(h, s), { maxWidth: 300 });
+    focusPin.on('popupopen', function () {
+      const btn = document.querySelector('.mp-open[data-id="' + h.id + '"]');
+      if (btn) btn.onclick = () => global.CivicUI.openHousehold(h.id);
+    });
+    focusPin.addTo(map);
+    focusPin.openPopup();
+  }
+
   function focus(h) {
     if (!ready) init();
     global.CivicUI.go('map');
@@ -312,9 +460,68 @@
       map.invalidateSize();
       if (h && h.lat && h.lng) {
         map.setView([h.lat, h.lng], 17);
-        L.popup().setLatLng([h.lat, h.lng]).setContent(popupHtml(h, AI().score(h))).openOn(map);
+        showPin(h);
       }
     }, 220);
+  }
+
+  /* ---------- Байршил гараар тэмдэглэх ---------- */
+  let edit = null;   // { id, marker, bar, clickFn }
+
+  function editLocation(hid) {
+    const h = S().household(hid);
+    if (!h) return;
+    global.CivicUI.closeDrawer();
+    if (!ready) init();
+    global.CivicUI.go('map');
+    setTimeout(() => {
+      map.invalidateSize();
+      cancelEdit();
+      const start = (h.lat != null && h.lng != null)
+        ? [h.lat, h.lng]
+        : [map.getCenter().lat, map.getCenter().lng];
+      map.setView(start, h.lat != null ? 17 : 14);
+
+      const mk = L.marker(start, { icon: pinIcon('#d97706'), draggable: true, zIndexOffset: 1000 });
+      mk.addTo(map);
+
+      const bar = document.createElement('div');
+      bar.style.cssText = 'position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:600;' +
+        'background:rgba(255,255,255,.97);border:1px solid var(--border);border-radius:12px;' +
+        'padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow);' +
+        'font-size:12.5px;max-width:92%;flex-wrap:wrap';
+      bar.innerHTML = '<span>📍 <b>' + esc(h.head || h.code) + '</b> — зураг дээр дарж эсвэл пинг чирж байршлыг тэмдэглэ</span>' +
+        '<button class="btn sm primary" id="locSave">✓ Хадгалах</button>' +
+        '<button class="btn sm" id="locCancel">Болих</button>';
+      document.getElementById('mapbox').appendChild(bar);
+
+      const clickFn = e => mk.setLatLng(e.latlng);
+      map.on('click', clickFn);
+
+      edit = { id: hid, marker: mk, bar: bar, clickFn: clickFn };
+
+      bar.querySelector('#locSave').onclick = function () {
+        const ll = mk.getLatLng();
+        S().updateHousehold(hid, { lat: +ll.lat.toFixed(6), lng: +ll.lng.toFixed(6), verified: true });
+        const saved = S().household(hid);
+        cancelEdit();
+        global.CivicUI.toast('Байршил хадгалагдлаа', 'ok');
+        refresh();
+        showPin(saved);
+      };
+      bar.querySelector('#locCancel').onclick = function () {
+        cancelEdit();
+        global.CivicUI.toast('Цуцлагдлаа', '');
+      };
+    }, 240);
+  }
+
+  function cancelEdit() {
+    if (!edit) return;
+    map.off('click', edit.clickFn);
+    map.removeLayer(edit.marker);
+    if (edit.bar && edit.bar.parentNode) edit.bar.parentNode.removeChild(edit.bar);
+    edit = null;
   }
 
   function invalidate() { if (ready) setTimeout(() => map.invalidateSize(), 120); }
@@ -328,6 +535,6 @@
     let t; return function () { clearTimeout(t); t = setTimeout(fn, ms); };
   }
 
-  global.CivicMap = { init, refresh, resetFilters, fit, focus, invalidate, fillSelects, setMode };
+  global.CivicMap = { init, refresh, resetFilters, fit, focus, invalidate, fillSelects, setMode, editLocation };
 
 })(window);

@@ -492,12 +492,14 @@
       '<button class="btn sm" id="issAddBtn" style="margin-top:10px">+ Гомдол бүртгэх</button></div>';
 
     const foot = '<button class="btn" id="drMap">🗺 Зураг дээр харах</button>' +
+      (S().can('edit') ? '<button class="btn" id="drLoc">📍 Байршил тэмдэглэх</button>' : '') +
       (S().can('edit') ? '<button class="btn primary" id="drEdit">✎ Засах</button>' : '') +
       (S().can('delete') ? '<button class="btn danger" id="drDel" style="margin-left:auto">🗑 Устгах</button>' : '');
 
     openDrawer(esc(h.head || h.code), esc(h.address), body, foot);
 
     $('drMap').onclick = () => { closeDrawer(); global.CivicMap.focus(h); };
+    if ($('drLoc')) $('drLoc').onclick = () => global.CivicMap.editLocation(h.id);
     if ($('drEdit')) $('drEdit').onclick = () => householdForm(h);
     if ($('drDel')) $('drDel').onclick = () => confirmBox('Энэ өрхийг устгах уу?',
       esc(h.head) + ' — иргэд, түүх, гомдол хамт устана.',
