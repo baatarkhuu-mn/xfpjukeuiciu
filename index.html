@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
-<link rel="stylesheet" href="assets/app.css?v=13">
+<link rel="stylesheet" href="assets/app.css?v=14">
 </head>
 <body>
 
@@ -17,7 +17,7 @@
 <div id="gate">
   <div class="gate-card">
     <div class="brand brand-vert">
-      <img src="assets/logo.png?v=13" alt="AilOS — Smarter Together" width="260"
+      <img src="assets/logo.png?v=14" alt="AilOS — Smarter Together" width="260"
         style="display:block;max-width:80%;height:auto;mix-blend-mode:multiply">
     </div>
     <label>Нэвтрэх нэр / И-мэйл</label>
@@ -27,8 +27,7 @@
     <button class="gate-btn" id="gbtn">Нэвтрэх</button>
     <div class="gate-err" id="gerr"></div>
     <div class="gate-hint">
-      Энэ систем нь <b>хязгаарлагдмал хандалттай</b>. Мэдээлэл нь хувь хүний нууцад хамаарна —
-      линк болон нууц үгээ гуравдагч этгээдэд бүү дамжуул.
+      Хязгаарлагдмал хандалттай дотоод систем.
     </div>
   </div>
 </div>
@@ -39,30 +38,30 @@
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="logo" style="justify-content:center">
-      <img src="assets/logo.png?v=13" alt="AilOS" width="158"
+      <img src="assets/logo.png?v=14" alt="AilOS" width="158"
         style="display:block;height:auto;mix-blend-mode:multiply">
     </div>
     <nav class="nav">
-      <div class="nav-item active" data-page="dashboard"><span class="ic">▦</span> Хяналтын самбар</div>
-      <div class="nav-item" data-page="map"><span class="ic">🗺</span> Газрын зураг</div>
+      <div class="nav-item active" data-page="dashboard">Хяналтын самбар</div>
+      <div class="nav-item" data-page="map">Газрын зураг</div>
 
       <div class="nav-sec">Дата сан</div>
-      <div class="nav-item" data-page="households"><span class="ic">🏠</span> Өрхийн бүртгэл <span class="badge" id="bdg-hh">0</span></div>
-      <div class="nav-item" data-page="citizens"><span class="ic">👥</span> Иргэд <span class="badge" id="bdg-ct">0</span></div>
-      <div class="nav-item" data-page="programs"><span class="ic">◎</span> Төсөл хөтөлбөр</div>
-      <div class="nav-item" data-page="issues"><span class="ic">⚑</span> Санал гомдол <span class="badge" id="bdg-is">0</span></div>
+      <div class="nav-item" data-page="households">Өрхийн бүртгэл <span class="badge" id="bdg-hh">0</span></div>
+      <div class="nav-item" data-page="citizens">Иргэд <span class="badge" id="bdg-ct">0</span></div>
+      <div class="nav-item" data-page="programs">Төсөл хөтөлбөр</div>
+      <div class="nav-item" data-page="issues">Санал гомдол <span class="badge" id="bdg-is">0</span></div>
 
       <div class="nav-sec">Хиймэл оюун</div>
-      <div class="nav-item" data-page="ai"><span class="ic">✦</span> Дэмжлэгийн шинжилгээ</div>
-      <div class="nav-item" data-page="strategy"><span class="ic">◈</span> Хорооны стратеги</div>
+      <div class="nav-item" data-page="ai">Дэмжлэгийн шинжилгээ</div>
+      <div class="nav-item" data-page="strategy">Хорооны стратеги</div>
 
       <div class="nav-sec">Багийн хяналт</div>
-      <div class="nav-item" data-page="team"><span class="ic">📣</span> Багийн гүйцэтгэл <span class="badge" id="bdg-st">0</span></div>
-      <div class="nav-item" data-page="tasks"><span class="ic">✓</span> Даалгавар <span class="badge" id="bdg-tk">0</span></div>
+      <div class="nav-item" data-page="team">Багийн гүйцэтгэл <span class="badge" id="bdg-st">0</span></div>
+      <div class="nav-item" data-page="tasks">Даалгавар <span class="badge" id="bdg-tk">0</span></div>
 
       <div class="nav-sec">Систем</div>
-      <div class="nav-item" data-page="io"><span class="ic">⇅</span> Импорт / Экспорт</div>
-      <div class="nav-item" data-page="settings"><span class="ic">⚙</span> Тохиргоо</div>
+      <div class="nav-item" data-page="io">Импорт / Экспорт</div>
+      <div class="nav-item" data-page="settings">Тохиргоо</div>
     </nav>
     <div class="userbox">
       <div class="avatar" id="uav">АД</div>
@@ -83,7 +82,7 @@
         <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
         <div>
           <h1>Хяналтын самбар</h1>
-          <div class="sub">Тойргийн ерөнхий байдал, дэмжлэгийн урьдчилсан тооцоо</div>
+          
         </div>
         <div class="topbar-right">
           <div class="search">
@@ -123,7 +122,7 @@
         </div>
         <div class="card">
           <div class="card-h">
-            <div><h3>✦ AI тэргүүлэх зорилтот өрхүүд</h3><div class="sub">Хөрвүүлэх өгөөж хамгийн өндөр</div></div>
+            <div><h3>Тэргүүлэх зорилтот өрхүүд</h3></div>
             <div class="r"><button class="btn sm" onclick="CivicUI.go('ai')">Бүгдийг харах</button></div>
           </div>
           <div id="dashPriority"></div>
@@ -131,19 +130,19 @@
       </div>
       <div class="grid g2">
         <div class="card">
-          <div class="card-h"><div><h3>Багийн 30 хоногийн гүйцэтгэл</h3><div class="sub">Ухуулагч тус бүрээр</div></div>
+          <div class="card-h"><div><h3>Багийн 30 хоногийн гүйцэтгэл</h3></div>
             <div class="r"><button class="btn sm" onclick="CivicUI.go('team')">Дэлгэрэнгүй</button></div></div>
           <div class="tbl-wrap"><table class="tbl" id="dashTeam"></table></div>
         </div>
         <div class="card">
-          <div class="card-h"><div><h3>Даалгаврын байдал</h3><div class="sub">Штабын одоогийн ачаалал</div></div>
+          <div class="card-h"><div><h3>Даалгаврын байдал</h3></div>
             <div class="r"><button class="btn sm" onclick="CivicUI.go('tasks')">Дэлгэрэнгүй</button></div></div>
           <div class="mini" id="taskMini" style="margin-bottom:18px"></div>
           <div id="taskBars"></div>
         </div>
       </div>
       <div class="card" style="margin-top:14px">
-        <div class="card-h"><div><h3>✦ Автомат дүгнэлт</h3><div class="sub">Одоогийн дата дээр үндэслэсэн штабын товч</div></div></div>
+        <div class="card-h"><div><h3>Дүгнэлт</h3></div></div>
         <div id="dashBrief"></div>
       </div>
     </section>
@@ -155,7 +154,7 @@
           <div class="ph">
             <button class="hamb" onclick="CivicUI.toggleSidebar()" style="margin-bottom:8px">☰</button>
             <h2>Газрын зураг</h2>
-            <p>Дүүрэг · хороо · гудамж · өрх</p>
+            
           </div>
           <div class="mapfilters">
             <div class="field"><label class="fl">Хайх</label>
@@ -184,12 +183,12 @@
         <div id="mapbox">
           <div id="leaflet"></div>
           <div class="maptools">
-            <button class="btn sm" id="mvMarkers">● Цэг</button>
-            <button class="btn sm" id="mvHeat">◍ Дулаан</button>
-            <button class="btn sm" id="mvKhoroo">◈ Хороо</button>
-            <button class="btn sm" id="mvDistrict">◇ Дүүрэг</button>
-            <button class="btn sm" id="mvFit">⤢ Багтаах</button>
-            <button class="btn sm" id="mvExport">⤓ Экспорт</button>
+            <button class="btn sm" id="mvMarkers">Цэг</button>
+            <button class="btn sm" id="mvHeat">Дулаан</button>
+            <button class="btn sm" id="mvKhoroo">Хороо</button>
+            <button class="btn sm" id="mvDistrict">Дүүрэг</button>
+            <button class="btn sm" id="mvFit">Багтаах</button>
+            <button class="btn sm" id="mvExport">Экспорт</button>
           </div>
           <div class="maplegend" id="mapLegend"></div>
         </div>
@@ -202,8 +201,8 @@
         <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
         <div><h1>Өрхийн бүртгэл</h1><div class="sub" id="hhSub">—</div></div>
         <div class="topbar-right">
-          <button class="btn" id="hhExport">⤓ Экспорт</button>
-          <button class="btn danger hide" id="hhDelSel">🗑 Устгах (<span id="hhSelN">0</span>)</button>
+          <button class="btn" id="hhExport">Экспорт</button>
+          <button class="btn danger hide" id="hhDelSel">Устгах (<span id="hhSelN">0</span>)</button>
           <button class="btn primary" id="hhAdd">+ Шинэ өрх</button>
         </div>
       </div>
@@ -233,7 +232,7 @@
         <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
         <div><h1>Иргэдийн бүртгэл</h1><div class="sub" id="ctSub">—</div></div>
         <div class="topbar-right">
-          <button class="btn" id="ctExport">⤓ Экспорт</button>
+          <button class="btn" id="ctExport">Экспорт</button>
         </div>
       </div>
       <div class="card" style="margin-top:14px;padding:14px 16px">
@@ -261,7 +260,7 @@
     <section class="page" data-page="programs">
       <div class="topbar">
         <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
-        <div><h1>Төсөл хөтөлбөр</h1><div class="sub">Хэрэгжүүлсэн ажил ба өрхийн хамрагдалт</div></div>
+        <div><h1>Төсөл хөтөлбөр</h1></div>
         <div class="topbar-right"><button class="btn primary" id="pgAdd">+ Шинэ хөтөлбөр</button></div>
       </div>
       <div class="grid g2" id="pgCards" style="margin-top:14px"></div>
@@ -276,7 +275,7 @@
           <select class="inp" id="isStatus"><option value="">Бүх төлөв</option>
             <option>Шинэ</option><option>Хүлээгдэж буй</option><option>Шийдэгдсэн</option></select>
           <select class="inp" id="isCat"><option value="">Бүх ангилал</option></select>
-          <button class="btn" id="isExport">⤓ Экспорт</button>
+          <button class="btn" id="isExport">Экспорт</button>
         </div>
       </div>
       <div class="grid g2" style="margin-top:14px">
@@ -293,11 +292,11 @@
     <section class="page" data-page="ai">
       <div class="topbar">
         <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
-        <div><h1>✦ Дэмжлэгийн шинжилгээ</h1><div class="sub">Өрх бүрийн дэмжих магадлал ба хөрвүүлэх өгөөж</div></div>
+        <div><h1>Дэмжлэгийн шинжилгээ</h1></div>
         <div class="topbar-right">
           <select class="inp" id="aiDist"><option value="">Бүх дүүрэг</option></select>
           <select class="inp" id="aiSeg"><option value="">Бүх сегмент</option></select>
-          <button class="btn" id="aiExport">⤓ Жагсаалт татах</button>
+          <button class="btn" id="aiExport">Татах</button>
         </div>
       </div>
       <div class="kpis" id="aiKpis"></div>
@@ -319,10 +318,10 @@
     <section class="page" data-page="strategy">
       <div class="topbar">
         <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
-        <div><h1>◈ Хорооны стратеги</h1><div class="sub">Хороо бүрийн боломж, зөвлөмж, нөөцийн хуваарилалт</div></div>
+        <div><h1>Хорооны стратеги</h1></div>
         <div class="topbar-right">
           <select class="inp" id="stDist"><option value="">Бүх дүүрэг</option></select>
-          <button class="btn" id="stExport">⤓ Экспорт</button>
+          <button class="btn" id="stExport">Экспорт</button>
         </div>
       </div>
       <div class="card pad0" style="margin-top:14px">
@@ -334,12 +333,12 @@
     <section class="page" data-page="team">
       <div class="topbar">
         <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
-        <div><h1>Багийн гүйцэтгэл</h1><div class="sub">Ухуулагч, менежерүүдийн ачаалал ба үр дүн</div></div>
+        <div><h1>Багийн гүйцэтгэл</h1></div>
         <div class="topbar-right">
           <select class="inp" id="tmDays"><option value="7">7 хоног</option>
             <option value="30" selected>30 хоног</option><option value="90">90 хоног</option>
             <option value="3650">Бүх хугацаа</option></select>
-          <button class="btn" id="tmExport">⤓ Экспорт</button>
+          <button class="btn" id="tmExport">Экспорт</button>
           <button class="btn primary" id="tmAdd">+ Гишүүн нэмэх</button>
         </div>
       </div>
@@ -355,8 +354,8 @@
         <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
         <div><h1>Даалгавар</h1><div class="sub" id="tkSub">Штабын дотоод ажлын хяналт</div></div>
         <div class="topbar-right">
-          <button class="btn" id="tkViewTable">▤ Хүснэгт</button>
-          <button class="btn" id="tkViewKanban">▥ Канбан</button>
+          <button class="btn" id="tkViewTable">Хүснэгт</button>
+          <button class="btn" id="tkViewKanban">Канбан</button>
           <select class="inp" id="tkOwner"><option value="">Бүх хариуцагч</option></select>
           <button class="btn primary" id="tkAdd">+ Шинэ даалгавар</button>
         </div>
@@ -369,7 +368,7 @@
     <section class="page" data-page="io">
       <div class="topbar">
         <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
-        <div><h1>Импорт / Экспорт</h1><div class="sub">Excel, CSV файлаас дата оруулах ба буцаан татах</div></div>
+        <div><h1>Импорт / Экспорт</h1></div>
       </div>
 
       <div class="steps" id="ioSteps">
@@ -383,21 +382,21 @@
         <div class="card-h"><div><h3>1. Файлаа оруулна уу</h3>
           <div class="sub">CSV, XLSX, XLS, JSON — багана нь ямар ч нэртэй байж болно</div></div></div>
         <div class="drop" id="ioDrop">
-          <div class="ic">⤓</div>
+          
           <b>Файлаа энд чирж оруулна уу</b>
           <p>эсвэл дарж сонгоно уу · дээд тал 20 МБ</p>
         </div>
         <input type="file" id="ioFile" accept=".csv,.xlsx,.xls,.json,.txt" class="hide">
         <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn" id="ioTemplate">⤓ Загвар файл татах</button>
-          <button class="btn" id="ioRestore">↺ Нөөцөөс сэргээх (JSON)</button>
+          <button class="btn" id="ioTemplate">Загвар файл</button>
+          <button class="btn" id="ioRestore">Нөөцөөс сэргээх</button>
         </div>
       </div>
 
       <div class="card hide" id="ioStep2" style="margin-top:14px">
         <div class="card-h"><div><h3>2. Багана тааруулах</h3>
           <div class="sub" id="ioFileInfo">—</div></div>
-          <div class="r"><button class="btn sm" id="ioAuto">✦ Автоматаар тааруулах</button></div></div>
+          <div class="r"><button class="btn sm" id="ioAuto">Автоматаар тааруулах</button></div></div>
         <div id="ioMapping"></div>
         <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <label class="chip pick"><input type="checkbox" id="ioDedupe" checked style="margin-right:6px">Давхардсан өрх нэгтгэх</label>
@@ -414,7 +413,7 @@
         <div class="card-h"><div><h3>3. Урьдчилан харах</h3><div class="sub" id="ioPrevInfo">—</div></div>
           <div class="r">
             <button class="btn" id="ioBack">← Буцах</button>
-            <button class="btn primary" id="ioCommit">✓ Датаг оруулах</button></div></div>
+            <button class="btn primary" id="ioCommit">Датаг оруулах</button></div></div>
         <div class="tbl-wrap"><table class="tbl" id="ioPreview"></table></div>
       </div>
 
@@ -422,12 +421,12 @@
         <div class="card">
           <div class="card-h"><div><h3>Экспорт</h3><div class="sub">Одоогийн дата санг татаж авах</div></div></div>
           <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn" data-exp="households-xlsx">⤓ Өрх (Excel)</button>
-            <button class="btn" data-exp="households-csv">⤓ Өрх (CSV)</button>
-            <button class="btn" data-exp="citizens-xlsx">⤓ Иргэд (Excel)</button>
-            <button class="btn" data-exp="ai-xlsx">⤓ AI оноо (Excel)</button>
-            <button class="btn" data-exp="full-xlsx">⤓ Бүх хүснэгт (Excel)</button>
-            <button class="btn primary" data-exp="backup-json">⤓ Бүрэн нөөц (JSON)</button>
+            <button class="btn" data-exp="households-xlsx">Өрх (Excel)</button>
+            <button class="btn" data-exp="households-csv">Өрх (CSV)</button>
+            <button class="btn" data-exp="citizens-xlsx">Иргэд (Excel)</button>
+            <button class="btn" data-exp="ai-xlsx">AI оноо (Excel)</button>
+            <button class="btn" data-exp="full-xlsx">Бүх хүснэгт (Excel)</button>
+            <button class="btn primary" data-exp="backup-json">Бүрэн нөөц (JSON)</button>
           </div>
           <p style="font-size:12px;color:var(--text-mute);margin-top:14px;line-height:1.7">
             JSON нөөц нь бүх хүснэгтийг бүрэн хадгална — өөр компьютер дээр сэргээхэд ашиглана.
@@ -445,7 +444,7 @@
     <section class="page" data-page="settings">
       <div class="topbar">
         <button class="hamb" onclick="CivicUI.toggleSidebar()">☰</button>
-        <div><h1>Тохиргоо</h1><div class="sub">Хандалт, загварын жин, дата сан</div></div>
+        <div><h1>Тохиргоо</h1></div>
       </div>
 
       <div class="grid g2" style="margin-top:14px">
@@ -461,9 +460,9 @@
         </div>
 
         <div class="card">
-          <div class="card-h"><div><h3>✦ AI загварын жин</h3>
+          <div class="card-h"><div><h3>AI загварын жин</h3>
             <div class="sub">Хүчин зүйл тус бүрийн нөлөөг тохируулна</div></div>
-            <div class="r"><button class="btn sm" id="wReset">↺ Анхны утга</button></div></div>
+            <div class="r"><button class="btn sm" id="wReset">Анхны утга</button></div></div>
           <div id="wSliders"></div>
         </div>
       </div>
@@ -478,8 +477,8 @@
             <input class="inp" id="sbKey" placeholder="eyJhbGciOi..."></div>
           <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:6px">
             <button class="btn primary" id="sbSave">Холбох</button>
-            <button class="btn" id="sbPush">↑ Хадгалах (push)</button>
-            <button class="btn" id="sbPull">↓ Татах (pull)</button>
+            <button class="btn" id="sbPush">Хадгалах (push)</button>
+            <button class="btn" id="sbPull">Татах (pull)</button>
           </div>
           <div id="sbStatus" style="font-size:12px;color:var(--text-mute);margin-top:12px"></div>
         </div>
@@ -488,8 +487,8 @@
           <div class="card-h"><div><h3>Дата сан</h3><div class="sub">Аюултай үйлдлүүд</div></div></div>
           <div id="dbStats" class="mini" style="margin-bottom:18px"></div>
           <div style="display:flex;gap:9px;flex-wrap:wrap">
-            <button class="btn" id="dbReseed">↺ Жишээ дата дахин үүсгэх</button>
-            <button class="btn danger" id="dbClear">🗑 Бүх датаг устгах</button>
+            <button class="btn" id="dbReseed">Жишээ дата дахин үүсгэх</button>
+            <button class="btn danger" id="dbClear">Бүх датаг устгах</button>
           </div>
           <p style="font-size:11.5px;color:var(--text-mute);margin-top:14px;line-height:1.7">
             Устгахын өмнө <b>Импорт/Экспорт → Бүрэн нөөц (JSON)</b> хийж ав.
@@ -530,12 +529,12 @@
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="assets/js/store.js?v=13"></script>
-<script src="assets/js/ai.js?v=13"></script>
-<script src="assets/js/charts.js?v=13"></script>
-<script src="assets/js/io.js?v=13"></script>
-<script src="assets/js/map.js?v=13"></script>
-<script src="assets/js/ui.js?v=13"></script>
-<script src="assets/js/main.js?v=13"></script>
+<script src="assets/js/store.js?v=14"></script>
+<script src="assets/js/ai.js?v=14"></script>
+<script src="assets/js/charts.js?v=14"></script>
+<script src="assets/js/io.js?v=14"></script>
+<script src="assets/js/map.js?v=14"></script>
+<script src="assets/js/ui.js?v=14"></script>
+<script src="assets/js/main.js?v=14"></script>
 </body>
 </html>

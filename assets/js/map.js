@@ -400,11 +400,11 @@
       row('Дундаж AI магадлал', Math.round(s.avgProb * 100) + '%') +
       row('Хамрагдалт', Math.round(s.coverage * 100) + '%') +
       '<div style="height:10px"></div>' +
-      row('◆ Бат бөх', fmt(seg.core), '#0d8f63') +
-      row('◆ Хазайсан дэмжигч', fmt(seg.lean), '#5cb85c') +
-      row('◆ Эргэлзэгч', fmt(seg.swing), '#b07d06') +
-      row('◆ Хазайсан эсрэг', fmt(seg['soft-opp']), '#e2701a') +
-      row('◆ Эсрэг', fmt(seg.opp), '#d92549');
+      row('Бат бөх', fmt(seg.core), '#0d8f63') +
+      row('Хазайсан дэмжигч', fmt(seg.lean), '#5cb85c') +
+      row('Эргэлзэгч', fmt(seg.swing), '#b07d06') +
+      row('Хазайсан эсрэг', fmt(seg['soft-opp']), '#e2701a') +
+      row('Эсрэг', fmt(seg.opp), '#d92549');
   }
   function row(k, v, c) {
     return '<div class="mapstat"><span style="color:' + (c || 'var(--text-dim)') + '">' + k +
@@ -492,8 +492,8 @@
         'background:rgba(255,255,255,.97);border:1px solid var(--border);border-radius:12px;' +
         'padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow);' +
         'font-size:12.5px;max-width:92%;flex-wrap:wrap';
-      bar.innerHTML = '<span>📍 <b>' + esc(h.head || h.code) + '</b> — зураг дээр дарж эсвэл пинг чирж байршлыг тэмдэглэ</span>' +
-        '<button class="btn sm primary" id="locSave">✓ Хадгалах</button>' +
+      bar.innerHTML = '<span><b>' + esc(h.head || h.code) + '</b> — зураг дээр дарж эсвэл пинг чирж байршлыг тэмдэглэ</span>' +
+        '<button class="btn sm primary" id="locSave">Хадгалах</button>' +
         '<button class="btn sm" id="locCancel">Болих</button>';
       document.getElementById('mapbox').appendChild(bar);
 

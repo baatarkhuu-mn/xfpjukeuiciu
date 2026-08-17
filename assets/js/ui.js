@@ -92,9 +92,8 @@
   }
   function segTag(seg) { return '<span class="tag ' + seg.cls + '">' + esc(seg.name) + '</span>'; }
   function kpi(o) {
-    return '<div class="kpi" style="--tint:' + o.tint + ';--icbg:' + o.icbg + '">' +
-      '<div class="kpi-h"><div class="kpi-ic" style="color:' + o.color + '">' + o.icon + '</div>' +
-      '<div><div class="kpi-lb">' + o.label + '</div><div class="kpi-v">' + o.value + '</div></div></div>' +
+    return '<div class="kpi">' +
+      '<div class="kpi-lb">' + o.label + '</div><div class="kpi-v">' + o.value + '</div>' +
       (o.spark ? C().spark(o.spark, o.color) : '') +
       (o.note ? '<div class="kpi-d">' + o.note + '</div>' : '') + '</div>';
   }
@@ -151,33 +150,33 @@
 
     $('dashKpis').innerHTML = [
       kpi({
-        label: 'Бүртгэлтэй өрх', value: fmt(s.households), icon: '🏠', color: '#0e6bff',
+        label: 'Бүртгэлтэй өрх', value: fmt(s.households), icon: '', color: '#0e6bff',
         tint: 'rgba(14,107,255,.25)', icbg: 'rgba(14,107,255,.16)',
         spark: tr.map(t => t.contacts),
         note: '<b>' + fmt(s.people) + '</b> иргэн · <b>' + fmt(s.voters) + '</b> сонгогч'
       }),
       kpi({
-        label: 'Дэмжигч өрх', value: fmt(s.supporters), icon: '✓', color: '#0d8f63',
+        label: 'Дэмжигч өрх', value: fmt(s.supporters), icon: '', color: '#0d8f63',
         tint: 'rgba(13,143,99,.22)', icbg: 'rgba(13,143,99,.15)',
         spark: tr.map(t => t.positive),
         note: '<b class="up">' + pc(s.supportRate) + '</b> нийт өрхийн'
       }),
       kpi({
-        label: 'AI дундаж магадлал', value: pc(s.avgProb), icon: '✦', color: '#0e6bff',
+        label: 'AI дундаж магадлал', value: pc(s.avgProb), icon: '', color: '#0e6bff',
         tint: 'rgba(61,125,255,.22)', icbg: 'rgba(61,125,255,.15)',
         spark: tr.map(t => Math.round(t.rate * 100)),
-        note: 'Загварын дундаж дэмжих магадлал'
+        note: ''
       }),
       kpi({
-        label: 'Хамрагдалт', value: pc(s.coverage), icon: '◎', color: '#0e9fbc',
+        label: 'Хамрагдалт', value: pc(s.coverage), icon: '', color: '#0e9fbc',
         tint: 'rgba(14,159,188,.2)', icbg: 'rgba(14,159,188,.14)',
         note: '<b>' + fmt(s.households - s.contacted) + '</b> өрхтэй хараахан холбогдоогүй'
       }),
       kpi({
         label: 'Шийдэгдээгүй гомдол', value: fmt(st.db.issues.filter(i => i.status !== 'Шийдэгдсэн' &&
-          (!scope || i.district === scope)).length), icon: '⚑', color: '#b07d06',
+          (!scope || i.district === scope)).length), icon: '', color: '#b07d06',
         tint: 'rgba(176,125,6,.2)', icbg: 'rgba(176,125,6,.14)',
-        note: 'Шийдвэрлэвэл дэмжлэг хамгийн хурдан өснө'
+        note: ''
       })
     ].join('');
 
@@ -359,7 +358,7 @@
         (dd == null ? 'хэзээ ч' : dd + ' хоног') + '</td>' +
         '<td><div style="display:flex;gap:4px">' +
         '<button class="btn sm hhopen" data-id="' + h.id + '">Нээх</button>' +
-        '<button class="btn sm hhmap" data-id="' + h.id + '" title="Зураг дээр">🗺</button>' +
+        '<button class="btn sm hhmap" data-id="' + h.id + '">Зураг</button>' +
         '</div></td></tr>';
     });
     html += '</tbody>';
@@ -491,10 +490,10 @@
         : '<div style="color:var(--text-mute);font-size:12.5px">Гомдол алга</div>') +
       '<button class="btn sm" id="issAddBtn" style="margin-top:10px">+ Гомдол бүртгэх</button></div>';
 
-    const foot = '<button class="btn" id="drMap">🗺 Зураг дээр харах</button>' +
-      (S().can('edit') ? '<button class="btn" id="drLoc">📍 Байршил тэмдэглэх</button>' : '') +
-      (S().can('edit') ? '<button class="btn primary" id="drEdit">✎ Засах</button>' : '') +
-      (S().can('delete') ? '<button class="btn danger" id="drDel" style="margin-left:auto">🗑 Устгах</button>' : '');
+    const foot = '<button class="btn" id="drMap">Зураг</button>' +
+      (S().can('edit') ? '<button class="btn" id="drLoc">Байршил</button>' : '') +
+      (S().can('edit') ? '<button class="btn primary" id="drEdit">Засах</button>' : '') +
+      (S().can('delete') ? '<button class="btn danger" id="drDel" style="margin-left:auto">Устгах</button>' : '');
 
     openDrawer(esc(h.head || h.code), esc(h.address), body, foot);
 
@@ -927,11 +926,11 @@
     const s = st.stats(base);
 
     $('aiKpis').innerHTML = [
-      kpi({ label: 'Дундаж магадлал', value: pc(s.avgProb), icon: '✦', color: '#0e6bff', tint: 'rgba(14,107,255,.24)', icbg: 'rgba(14,107,255,.16)', note: fmt(base.length) + ' өрх дээр тооцсон' }),
-      kpi({ label: 'Бат бөх дэмжигч', value: fmt(segCount.core), icon: '◆', color: '#0d8f63', tint: 'rgba(13,143,99,.22)', icbg: 'rgba(13,143,99,.15)', note: pc(segCount.core / Math.max(1, base.length)) + ' — GOTV зорилтот' }),
-      kpi({ label: 'Эргэлзэгч', value: fmt(segCount.swing), icon: '◈', color: '#b07d06', tint: 'rgba(176,125,6,.22)', icbg: 'rgba(176,125,6,.15)', note: 'Хамгийн өндөр өгөөжтэй бүлэг' }),
-      kpi({ label: 'Эсрэг талд', value: fmt(segCount.opp + segCount['soft-opp']), icon: '◇', color: '#d92549', tint: 'rgba(217,37,73,.2)', icbg: 'rgba(217,37,73,.14)', note: 'Нөөц бага зарцуулах' }),
-      kpi({ label: 'Дата дутуу өрх', value: fmt(base.filter(h => AI().score(h).conf < .4).length), icon: '?', color: '#0e9fbc', tint: 'rgba(14,159,188,.2)', icbg: 'rgba(14,159,188,.14)', note: 'Итгэлцэл 40%-иас доош' })
+      kpi({ label: 'Дундаж магадлал', value: pc(s.avgProb), icon: '', color: '#0e6bff', tint: 'rgba(14,107,255,.24)', icbg: 'rgba(14,107,255,.16)', note: fmt(base.length) + ' өрх дээр тооцсон' }),
+      kpi({ label: 'Бат бөх дэмжигч', value: fmt(segCount.core), icon: '', color: '#0d8f63', tint: 'rgba(13,143,99,.22)', icbg: 'rgba(13,143,99,.15)', note: pc(segCount.core / Math.max(1, base.length)) }),
+      kpi({ label: 'Эргэлзэгч', value: fmt(segCount.swing), icon: '', color: '#b07d06', tint: 'rgba(176,125,6,.22)', icbg: 'rgba(176,125,6,.15)', note: '' }),
+      kpi({ label: 'Эсрэг талд', value: fmt(segCount.opp + segCount['soft-opp']), icon: '', color: '#d92549', tint: 'rgba(217,37,73,.2)', icbg: 'rgba(217,37,73,.14)', note: '' }),
+      kpi({ label: 'Дата дутуу өрх', value: fmt(base.filter(h => AI().score(h).conf < .4).length), icon: '', color: '#0e9fbc', tint: 'rgba(14,159,188,.2)', icbg: 'rgba(14,159,188,.14)', note: 'Итгэлцэл 40%-иас доош' })
     ].join('');
 
     $('aiHist').innerHTML = C().histogram(base.map(h => AI().score(h).prob), 10);
@@ -1017,7 +1016,7 @@
           '<td>' + pc(k.swingShare) + '</td>' +
           '<td><b style="color:#0e6bff">' + (k.opportunity * 100).toFixed(0) + '</b></td>' +
           '<td style="font-size:12.5px;color:var(--text-dim);max-width:250px">' + esc(k.action) + '</td>' +
-          '<td><button class="btn sm stgo" data-d="' + esc(k.district) + '" data-k="' + k.khoroo + '">🗺</button></td></tr>';
+          '<td><button class="btn sm stgo" data-d="' + esc(k.district) + '" data-k="' + k.khoroo + '">Зураг</button></td></tr>';
       }).join('') + '</tbody>';
     $('stTable').querySelectorAll('.stgo').forEach(b => b.onclick = () => {
       go('map');
@@ -1056,11 +1055,11 @@
     }), { reached: 0, contacts: 0, positive: 0, assigned: 0 });
 
     $('tmKpis').innerHTML = [
-      kpi({ label: 'Идэвхтэй гишүүн', value: fmt(st.db.staff.filter(s => s.active !== false).length), icon: '📣', color: '#0e6bff', tint: 'rgba(14,107,255,.24)', icbg: 'rgba(14,107,255,.16)', note: fmt(st.db.staff.length) + ' нийт бүртгэлтэй' }),
-      kpi({ label: 'Хүрсэн өрх', value: fmt(tot.reached), icon: '🏠', color: '#0e6bff', tint: 'rgba(61,125,255,.22)', icbg: 'rgba(61,125,255,.15)', note: 'сонгосон хугацаанд' }),
-      kpi({ label: 'Холбоо барилт', value: fmt(tot.contacts), icon: '☎', color: '#0e9fbc', tint: 'rgba(14,159,188,.2)', icbg: 'rgba(14,159,188,.14)', note: 'нийт үйлдэл' }),
-      kpi({ label: 'Эерэг хариу', value: pc(tot.contacts ? tot.positive / tot.contacts : 0), icon: '✓', color: '#0d8f63', tint: 'rgba(13,143,99,.22)', icbg: 'rgba(13,143,99,.15)', note: fmt(tot.positive) + ' эерэг уулзалт' }),
-      kpi({ label: 'Хариуцсан өрх', value: fmt(tot.assigned), icon: '◎', color: '#b07d06', tint: 'rgba(176,125,6,.2)', icbg: 'rgba(176,125,6,.14)', note: 'хуваарилагдсан нийт' })
+      kpi({ label: 'Идэвхтэй гишүүн', value: fmt(st.db.staff.filter(s => s.active !== false).length), icon: '', color: '#0e6bff', tint: 'rgba(14,107,255,.24)', icbg: 'rgba(14,107,255,.16)', note: fmt(st.db.staff.length) + ' нийт бүртгэлтэй' }),
+      kpi({ label: 'Хүрсэн өрх', value: fmt(tot.reached), icon: '', color: '#0e6bff', tint: 'rgba(61,125,255,.22)', icbg: 'rgba(61,125,255,.15)', note: 'сонгосон хугацаанд' }),
+      kpi({ label: 'Холбоо барилт', value: fmt(tot.contacts), icon: '', color: '#0e9fbc', tint: 'rgba(14,159,188,.2)', icbg: 'rgba(14,159,188,.14)', note: 'нийт үйлдэл' }),
+      kpi({ label: 'Эерэг хариу', value: pc(tot.contacts ? tot.positive / tot.contacts : 0), icon: '', color: '#0d8f63', tint: 'rgba(13,143,99,.22)', icbg: 'rgba(13,143,99,.15)', note: fmt(tot.positive) + ' эерэг уулзалт' }),
+      kpi({ label: 'Хариуцсан өрх', value: fmt(tot.assigned), icon: '', color: '#b07d06', tint: 'rgba(176,125,6,.2)', icbg: 'rgba(176,125,6,.14)', note: 'хуваарилагдсан нийт' })
     ].join('');
 
     $('tmTable').innerHTML = '<thead><tr><th>Гишүүн</th><th>Албан тушаал</th><th class="num">Хариуцсан</th>' +
@@ -1143,10 +1142,10 @@
     $('tkViewTable').classList.toggle('primary', tkView === 'table');
     $('tkViewKanban').classList.toggle('primary', tkView === 'kanban');
     $('tkKpis').innerHTML = [
-      kpi({ label: 'Нээлттэй даалгавар', value: fmt(ts.open), icon: '✓', color: '#0e6bff', tint: 'rgba(14,107,255,.24)', icbg: 'rgba(14,107,255,.16)', note: fmt(ts.total) + ' нийт' }),
-      kpi({ label: 'Хугацаа хэтэрсэн', value: fmt(ts.overdue), icon: '⏱', color: '#d92549', tint: 'rgba(217,37,73,.2)', icbg: 'rgba(217,37,73,.14)', note: 'яаралтай авч үзэх' }),
-      kpi({ label: 'Өндөр ач холбогдол', value: fmt(ts.highOpen), icon: '⚑', color: '#b07d06', tint: 'rgba(176,125,6,.2)', icbg: 'rgba(176,125,6,.14)', note: 'нээлттэй байгаа' }),
-      kpi({ label: 'Дууссан', value: fmt(ts.done), icon: '◆', color: '#0d8f63', tint: 'rgba(13,143,99,.22)', icbg: 'rgba(13,143,99,.15)', note: pc(ts.total ? ts.done / ts.total : 0) + ' гүйцэтгэл' })
+      kpi({ label: 'Нээлттэй даалгавар', value: fmt(ts.open), icon: '', color: '#0e6bff', tint: 'rgba(14,107,255,.24)', icbg: 'rgba(14,107,255,.16)', note: fmt(ts.total) + ' нийт' }),
+      kpi({ label: 'Хугацаа хэтэрсэн', value: fmt(ts.overdue), icon: '', color: '#d92549', tint: 'rgba(217,37,73,.2)', icbg: 'rgba(217,37,73,.14)', note: '' }),
+      kpi({ label: 'Өндөр ач холбогдол', value: fmt(ts.highOpen), icon: '', color: '#b07d06', tint: 'rgba(176,125,6,.2)', icbg: 'rgba(176,125,6,.14)', note: '' }),
+      kpi({ label: 'Дууссан', value: fmt(ts.done), icon: '', color: '#0d8f63', tint: 'rgba(13,143,99,.22)', icbg: 'rgba(13,143,99,.15)', note: pc(ts.total ? ts.done / ts.total : 0) + ' гүйцэтгэл' })
     ].join('');
 
     const owner = $('tkOwner').value;
@@ -1177,15 +1176,14 @@
         '<th>Ач холбогдол</th><th>Дуусах</th><th style="width:150px">Явц</th><th>Ангилал</th><th></th></tr></thead><tbody>' +
         (items.length ? items.map(function (t) {
           const m = taskCardMeta(t);
-          return '<tr><td><b>' + esc(t.title) + '</b>' + (t.comments ? '<span style="color:var(--text-mute);' +
-            'font-size:11.5px;margin-left:7px">💬 ' + t.comments + '</span>' : '') + '</td>' +
+          return '<tr><td><b>' + esc(t.title) + '</b></td>' +
             '<td><div style="display:flex;align-items:center;gap:8px">' +
             '<div class="avatar" style="width:24px;height:24px;flex:0 0 24px;font-size:9.5px">' +
             esc(initials(m.owner)) + '</div><span style="font-size:12.5px">' + esc(m.owner) + '</span></div></td>' +
             '<td><span class="tag ' + (t.priority === 'Өндөр' ? 't-s1' : t.priority === 'Дунд' ? 't-s3' : 't-gray') +
             '">' + esc(t.priority) + '</span></td>' +
             '<td style="font-size:12.5px;color:' + (m.over ? 'var(--red)' : 'var(--text-dim)') + '">' +
-            (m.over ? '⏱ ' : '') + esc(t.due || '—') + '</td>' +
+            (m.over ? '' : '') + esc(t.due || '—') + '</td>' +
             '<td>' + C().progress((t.progress || 0) / 100,
               t.progress >= 100 ? '#0d8f63' : t.progress >= 60 ? '#0e6bff' : '#0e6bff') + '</td>' +
             '<td><span class="tag t-purple">' + esc(t.tag || '—') + '</span></td>' +
@@ -1495,7 +1493,7 @@
       users.map(u => '<tr><td><b>' + esc(u.u) + '</b></td>' +
         '<td><span class="tag t-purple">' + esc((K().ROLES[u.r] || {}).name || u.r) + '</span></td>' +
         '<td style="font-size:12px;color:var(--text-mute)">' + esc((u.c || '').slice(0, 10)) + '</td>' +
-        '<td style="text-align:right"><button class="btn sm usrdel" data-u="' + esc(u.u) + '">🗑</button></td></tr>').join('') +
+        '<td style="text-align:right"><button class="btn sm usrdel" data-u="' + esc(u.u) + '">Устгах</button></td></tr>').join('') +
       '</tbody>';
     $('usrTable').querySelectorAll('.usrdel').forEach(b => b.onclick = () => {
       if (users.length <= 1) return toast('Сүүлийн хэрэглэгчийг устгах боломжгүй', 'err');
