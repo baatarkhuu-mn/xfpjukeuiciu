@@ -89,8 +89,10 @@
     setupMode = Auth.list().length === 0;
     const card = document.querySelector('.gate-card');
     if (setupMode) {
-      card.querySelector('h1').textContent = 'Анхны тохиргоо';
-      card.querySelector('.sub').textContent = 'Штабын админ бүртгэлээ үүсгэнэ үү';
+      const h1 = card.querySelector('h1');
+      if (h1) h1.textContent = 'Анхны тохиргоо';
+      const sub = card.querySelector('.sub');
+      if (sub) sub.textContent = 'Штабын админ бүртгэлээ үүсгэнэ үү';
       $('gbtn').textContent = 'Бүртгэл үүсгэх';
       $('gu').placeholder = 'admin';
       $('gp').placeholder = 'Хүчтэй нууц үг (6+)';

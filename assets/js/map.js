@@ -18,42 +18,29 @@
   };
 
   /* ---------- Эхлүүлэх ---------- */
+  /* УБ-ын нийт нутаг (Багануур, Багахангай хамт) */
+  const UB_BOUNDS = L.latLngBounds([[47.15, 106.15], [48.45, 108.75]]);
+
   function init() {
     if (ready || !global.L) return;
     map = L.map('leaflet', {
       center: [47.9185, 106.9175],
       zoom: 12,
+      minZoom: 9,
+      maxBounds: UB_BOUNDS.pad(0.05),
+      maxBoundsViscosity: 0.9,
       zoomControl: true,
       preferCanvas: true
     });
 
-    /* Google давхаргууд — хамгийн шинэ зураглал (албан бус tile endpoint,
-       API түлхүүр шаардахгүй; их ачаалалтай бол Maps API түлхүүр рүү шилжинэ) */
-    const gRoad = L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&hl=mn&x={x}&y={y}&z={z}', {
+    /* Зөвхөн Google эрлийз — хиймэл дагуул + гудамжны нэр (hl=mn, албан бус
+       tile endpoint; их ачаалалтай бол Maps API түлхүүр рүү шилжинэ) */
+    L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&hl=mn&x={x}&y={y}&z={z}', {
       subdomains: '0123', maxZoom: 21, attribution: '&copy; Google'
-    });
-    const gHybrid = L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&hl=mn&x={x}&y={y}&z={z}', {
-      subdomains: '0123', maxZoom: 21, attribution: '&copy; Google'
-    });
-    const gSat = L.tileLayer('https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-      subdomains: '0123', maxZoom: 21, attribution: '&copy; Google'
-    });
-    const light = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: 'abcd', maxZoom: 20
-    });
-    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 19
-    });
-    gRoad.addTo(map);
-    L.control.layers({
-      'Google — зам': gRoad,
-      'Google — эрлийз (дагуул + нэр)': gHybrid,
-      'Google — хиймэл дагуул': gSat,
-      'Цайвар (CARTO)': light,
-      'OpenStreetMap': osm
-    }, null, { position: 'topleft' }).addTo(map);
+    }).addTo(map);
     L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map);
+
+    loadBoundaries();
 
     cluster = L.markerClusterGroup({
       chunkedLoading: true,
@@ -103,6 +90,18 @@
     };
 
     updateLegend();
+  }
+
+  /* Дүүргийн албан ёсны захиргааны хил (assets/districts.json) */
+  let BOUNDS = null;
+  function loadBoundaries() {
+    fetch('assets/districts.json?v=1')
+      .then(r => r.json())
+      .then(d => {
+        BOUNDS = d.districts || null;
+        if (BOUNDS && mode === 'district') refresh();
+      })
+      .catch(e => console.warn('Хилийн дата ачаалагдсангүй — таамаг хил ашиглана', e));
   }
 
   /* Дүүрэг тус бүрийн ялгах өнгө */
@@ -263,7 +262,12 @@
         if (!byDist.has(h.district)) byDist.set(h.district, []);
         byDist.get(h.district).push(h);
       });
-      byDist.forEach(function (list, name) {
+      /* Албан ёсны хилтэй бол бүх дүүргийг (дата байхгүйг нь ч) зурна */
+      const distNames = BOUNDS
+        ? Array.from(new Set(Object.keys(BOUNDS).concat(Array.from(byDist.keys()))))
+        : Array.from(byDist.keys());
+      distNames.forEach(function (name) {
+        const list = byDist.get(name) || [];
         const col = distColor(name);
         const pts = list.map(h => [h.lat, h.lng]);
         const s = S().stats(list);
@@ -279,10 +283,25 @@
           '<button class="mp-dist" data-d="' + esc(name) + '" style="margin-top:10px;width:100%;padding:6px;' +
           'border-radius:8px;background:' + col + ';color:#fff;font-weight:600;font-size:12px;cursor:pointer">' +
           'Энэ дүүргээр шүүх</button>';
+        const official = BOUNDS && BOUNDS[name];
         let cy = 0, cx = 0;
-        pts.forEach(p => { cy += p[0]; cx += p[1]; });
-        cy /= pts.length; cx /= pts.length;
-        if (pts.length >= 3) {
+        if (official) {
+          const ring = official.reduce((a, b) => (b.length > a.length ? b : a), official[0]);
+          ring.forEach(p => { cy += p[0]; cx += p[1]; });
+          cy /= ring.length; cx /= ring.length;
+        } else if (pts.length) {
+          pts.forEach(p => { cy += p[0]; cx += p[1]; });
+          cy /= pts.length; cx /= pts.length;
+        } else return;
+        if (official) {
+          /* Албан ёсны захиргааны хил */
+          const poly = L.polygon(official, {
+            color: col, weight: 3, fillColor: col, fillOpacity: 0.10
+          });
+          poly.bindPopup(popup);
+          poly.on('popupopen', bindDistBtn);
+          poly.addTo(khLayer);
+        } else if (pts.length >= 3) {
           const poly = L.polygon(expand(hull(pts), 1.06), {
             color: col, weight: 2.5, fillColor: col, fillOpacity: 0.13, dashArray: '6 5'
           });
