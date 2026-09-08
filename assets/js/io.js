@@ -276,17 +276,16 @@
      хороо → тогтмол төв цэг, гудамж → хорооны доторх тогтмол бүс,
      өрх бүр → бүсийн доторх жижиг тархалт. Нэг гудамжныхан зэрэгцэнэ. */
   function autoLocate(district, khoroo, street, uniq) {
+    const kc = K().KH_CENTERS[+khoroo];
     const d = K().DISTRICTS.find(x => x.name === district) || K().DISTRICTS[0];
-    const rk = K().prng((khoroo || 1) * 7919 + d.name.length * 101);
-    const angK = rk() * Math.PI * 2, radK = Math.sqrt(rk()) * d.r * 0.8;
-    let lat = d.lat + Math.cos(angK) * radK * 0.62;
-    let lng = d.lng + Math.sin(angK) * radK;
+    let lat = kc ? kc[0] : d.lat;
+    let lng = kc ? kc[1] : d.lng;
     let hsh = 0;
     const s = String(street || '').trim().toLowerCase();
     for (let i = 0; i < s.length; i++) hsh = (hsh * 31 + s.charCodeAt(i)) >>> 0;
     if (s) {
       const rs = K().prng(hsh || 1);
-      const a2 = rs() * Math.PI * 2, r2 = Math.sqrt(rs()) * 0.008;
+      const a2 = rs() * Math.PI * 2, r2 = Math.sqrt(rs()) * 0.005;
       lat += Math.cos(a2) * r2 * 0.62;
       lng += Math.sin(a2) * r2;
     }

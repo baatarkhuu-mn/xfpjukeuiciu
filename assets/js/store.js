@@ -36,15 +36,23 @@
     { name: 'Чингэлтэй', khoroo: 24, lat: 47.9330, lng: 106.8890, r: 0.030 }
   ];
 
-  /* Хороо тус бүрийн ойролцоо төв (хотын хэсэг урагшаа, гэр хороолол хойшоо) */
+  /* Хороо тус бүрийн төв цэг — дүүргийн албан хилийн ДОТОР тооцсон.
+     1–12 өмнөд хотын хэсэг, 13–24 хойд гэр хороолол. Ойролцоо утга —
+     хорооны албан хил олдвол эндээс шинэчилнэ. */
+  const KH_CENTERS = {
+    1: [47.9185, 106.90268], 2: [47.9185, 106.90685], 3: [47.9185, 106.91102],
+    4: [47.9245, 106.90074], 5: [47.9245, 106.90514], 6: [47.9245, 106.90955],
+    7: [47.9305, 106.89212], 8: [47.9305, 106.89587], 9: [47.9305, 106.89962],
+    10: [47.9365, 106.88955], 11: [47.9365, 106.89547], 12: [47.9365, 106.90139],
+    13: [47.9455, 106.88218], 14: [47.9455, 106.89225], 15: [47.9455, 106.90232],
+    16: [47.9585, 106.87756], 17: [47.9585, 106.88939], 18: [47.9585, 106.90121],
+    19: [47.9725, 106.87803], 20: [47.9725, 106.89044], 21: [47.9725, 106.90285],
+    22: [47.9875, 106.87715], 23: [47.9875, 106.89374], 24: [47.9875, 106.91033]
+  };
+
   function khorooCenter(k) {
-    const urban = k <= 12;
-    const row = urban ? Math.floor((k - 1) / 4) : Math.floor((k - 13) / 4);
-    const col = (k - 1) % 4;
-    return {
-      lat: urban ? 47.9185 + row * 0.008 : 47.9500 + row * 0.022,
-      lng: 106.8600 + col * 0.018 + (urban ? 0 : 0.004)
-    };
+    const c = KH_CENTERS[k] || KH_CENTERS[1];
+    return { lat: c[0], lng: c[1] };
   }
 
   const STREETS = ['Энхтайваны өргөн чөлөө', 'Их тойруу', 'Чингисийн өргөн чөлөө', 'Сөүлийн гудамж',
@@ -380,10 +388,10 @@
       if (!this.db.households || !this.db.households.length) {
         this.db = generateSeed(1400);
         this.cfg.seeded = true;
-        this.cfg.seedVer = 2;
+        this.cfg.seedVer = 3;
         this.saveCfg();
         this.persist();
-      } else if (this.cfg.seedVer !== 2) {
+      } else if (this.cfg.seedVer !== 3) {
         /* Хуучин 9 дүүргийн жишээ датаг Чингэлтэйн шинэ жишээгээр солино.
            Демо гэдгийг: импортын түүхгүй + seed-ийн ID хэв маягтай (hh_00001)
            эсэхээр таньдаг — бодит импортолсон датаг хэзээ ч хөндөхгүй. */
@@ -392,7 +400,7 @@
         const demo = !imports.length && this.db.households.length > 0 &&
           /^hh_\d{5}$/.test(this.db.households[0].id);
         if (demo) this.db = generateSeed(1400);
-        this.cfg.seedVer = 2;
+        this.cfg.seedVer = 3;
         this.cfg.seeded = demo;
         this.saveCfg();
         this.persist();
@@ -814,7 +822,7 @@
     reseed(n) {
       this.db = generateSeed(n || 1400);
       this.cfg.seeded = true;
-      this.cfg.seedVer = 2;
+      this.cfg.seedVer = 3;
       this.saveCfg();
       this.persist();
     },
@@ -861,7 +869,7 @@
   global.CivicConst = {
     SUPPORT, PARTIES, HOUSING, INCOME, EDU, CONTACT_TYPES, ISSUE_CATS,
     DISTRICTS, STREETS, PROGRAM_SEED, ROLES, TASK_STATUS, TASK_PRIO, TASK_TAGS,
-    KH_INDICATORS, FOCUS, uid, today, daysAgo, prng
+    KH_INDICATORS, FOCUS, KH_CENTERS, uid, today, daysAgo, prng
   };
 
 })(window);

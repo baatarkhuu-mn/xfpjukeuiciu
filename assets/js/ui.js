@@ -1199,7 +1199,7 @@
 
   /* ═══════════ 9. ДААЛГАВАР ═══════════ */
 
-  let tkView = 'table';
+  let tkView = 'kanban';
 
   function renderTasks() {
     const st = S();
@@ -1208,8 +1208,6 @@
       $('tkOwner').dataset.f = '1';
       $('tkOwner').onchange = drawTk;
       $('tkAdd').onclick = () => taskForm(null);
-      $('tkViewTable').onclick = () => { tkView = 'table'; drawTk(); };
-      $('tkViewKanban').onclick = () => { tkView = 'kanban'; drawTk(); };
     }
     drawTk();
   }
@@ -1217,8 +1215,7 @@
   function drawTk() {
     const st = S();
     const ts = st.taskStats();
-    $('tkViewTable').classList.toggle('primary', tkView === 'table');
-    $('tkViewKanban').classList.toggle('primary', tkView === 'kanban');
+
     $('tkKpis').innerHTML = [
       kpi({ label: 'Нээлттэй даалгавар', value: fmt(ts.open), icon: '', color: '#0e6bff', tint: 'rgba(14,107,255,.24)', icbg: 'rgba(14,107,255,.16)', note: fmt(ts.total) + ' нийт' }),
       kpi({ label: 'Хугацаа хэтэрсэн', value: fmt(ts.overdue), icon: '', color: '#d92549', tint: 'rgba(217,37,73,.2)', icbg: 'rgba(217,37,73,.14)', note: '' }),
