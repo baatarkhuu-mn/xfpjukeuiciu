@@ -182,7 +182,7 @@
     let seq = S().db.households.length;
 
     rows.forEach(function (row, ri) {
-      const district = normDistrict(g(row, 'district'));
+      const district = normDistrict(g(row, 'district')) || K().FOCUS;
       const khoroo = parseKhoroo(g(row, 'khoroo'));
       const street = String(g(row, 'street') || '').trim();
       const code = String(g(row, 'code') || '').trim();
@@ -198,7 +198,7 @@
         seq++;
         let lat = parseNum(g(row, 'lat')), lng = parseNum(g(row, 'lng'));
         if ((lat == null || lng == null || Math.abs(lat) > 90) && opts.geo !== false) {
-          const c = khorooCentroid(district, khoroo, ri);
+          const c = autoLocate(district, khoroo, street, ri);
           lat = c.lat; lng = c.lng;
         }
         const rawStaff = String(g(row, 'assigned_to') || '').trim().toLowerCase();
@@ -272,13 +272,29 @@
       .join('|')).toLowerCase();
   }
 
-  function khorooCentroid(district, khoroo, seed) {
+  /* Координатгүй өрхийг нийтлэг мэдээллээс байршуулах:
+     хороо → тогтмол төв цэг, гудамж → хорооны доторх тогтмол бүс,
+     өрх бүр → бүсийн доторх жижиг тархалт. Нэг гудамжныхан зэрэгцэнэ. */
+  function autoLocate(district, khoroo, street, uniq) {
     const d = K().DISTRICTS.find(x => x.name === district) || K().DISTRICTS[0];
-    const r = K().prng((khoroo || 1) * 7919 + (seed || 0) * 31 + d.name.length * 101);
-    const ang = r() * Math.PI * 2, rad = Math.sqrt(r()) * d.r * 0.85;
+    const rk = K().prng((khoroo || 1) * 7919 + d.name.length * 101);
+    const angK = rk() * Math.PI * 2, radK = Math.sqrt(rk()) * d.r * 0.8;
+    let lat = d.lat + Math.cos(angK) * radK * 0.62;
+    let lng = d.lng + Math.sin(angK) * radK;
+    let hsh = 0;
+    const s = String(street || '').trim().toLowerCase();
+    for (let i = 0; i < s.length; i++) hsh = (hsh * 31 + s.charCodeAt(i)) >>> 0;
+    if (s) {
+      const rs = K().prng(hsh || 1);
+      const a2 = rs() * Math.PI * 2, r2 = Math.sqrt(rs()) * 0.008;
+      lat += Math.cos(a2) * r2 * 0.62;
+      lng += Math.sin(a2) * r2;
+    }
+    const rr = K().prng((((hsh || 7) + (uniq || 0) * 97) >>> 0) || 13);
+    const a3 = rr() * Math.PI * 2, r3 = Math.sqrt(rr()) * 0.0016;
     return {
-      lat: +(d.lat + Math.cos(ang) * rad * 0.62).toFixed(6),
-      lng: +(d.lng + Math.sin(ang) * rad).toFixed(6)
+      lat: +(lat + Math.cos(a3) * r3 * 0.62).toFixed(6),
+      lng: +(lng + Math.sin(a3) * r3).toFixed(6)
     };
   }
 
@@ -304,6 +320,8 @@
       st.db.citizens = st.db.citizens.filter(c => !hids.has(c.household_id));
       result.citizens.forEach(c => st.db.citizens.push(c));
     }
+    st.cfg.seeded = false;   // бодит дата орсон — демо seed-ийг дахин үүсгэхгүй
+    st.saveCfg();
     st.normalize();
     st.persist();
     logImport({ added, updated, rows: result.households.length, date: new Date().toISOString() });
@@ -333,7 +351,7 @@
   /* Татах файлын нэр — гаднын хүнд утга нь илрэхгүй байхаар */
   const FILE_TAG = 'ail';
   const FILE_KIND = {
-    households: 'orkh', citizens: 'irgen', ai: 'onool', staff: 'bag',
+    households: 'orkh', citizens: 'irgen', ai: 'onool', staff: 'bag', khoroos: 'khoroo',
     tasks: 'daalgavar', issues: 'gomdol', strategy: 'khoroo'
   };
 
@@ -443,6 +461,22 @@
     });
   }
 
+  function khorooRows() {
+    const st = S();
+    const IND = K().KH_INDICATORS;
+    return st.allKhoroos(K().FOCUS).map(function (kh) {
+      const rows = st.db.households.filter(h => h.district === kh.district && +h.khoroo === kh.khoroo);
+      const s = st.stats(rows);
+      const prof = st.khorooProfile(kh.district, kh.khoroo);
+      const ind = (prof && prof.ind) || {};
+      const o = { 'Хороо': kh.khoroo, 'Өрх': s.households, 'Иргэн': s.people, 'Сонгогч': s.voters,
+        'Дэмжлэг %': Math.round(s.supportRate * 100), 'Хамрагдалт %': Math.round(s.coverage * 100) };
+      IND.forEach(i => { o[i.n] = ind[i.k] != null ? ind[i.k] : ''; });
+      o['Тэмдэглэл'] = prof ? prof.notes : '';
+      return o;
+    });
+  }
+
   function taskRows() {
     const st = S();
     return st.db.tasks.map(t => ({
@@ -480,6 +514,7 @@
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(householdRows()), 'Өрх');
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(citizenRows()), 'Иргэд');
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(aiRows()), 'AI оноо');
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(khorooRows()), 'Хороо');
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(staffRows()), 'Баг');
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(taskRows()), 'Даалгавар');
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(issueRows()), 'Гомдол');
@@ -492,6 +527,7 @@
       'ai': () => aiRows(),
       'staff': () => staffRows(),
       'tasks': () => taskRows(),
+      'khoroos': () => khorooRows(),
       'issues': () => issueRows(),
       'strategy': () => global.CivicAI.khorooStrategy().map(k => ({
         'Дүүрэг': k.district, 'Хороо': k.khoroo, 'Өрх': k.households, 'Иргэн': k.people,
@@ -552,7 +588,7 @@
 
   global.CivicIO = {
     FIELDS, readFile, autoMap, transform, commit, exportAs, template,
-    history, toCsv, download, parseSupport, parseDate
+    history, toCsv, download, parseSupport, parseDate, autoLocate
   };
 
 })(window);

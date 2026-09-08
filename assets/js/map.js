@@ -18,16 +18,16 @@
   };
 
   /* ---------- Эхлүүлэх ---------- */
-  /* УБ-ын нийт нутаг (Багануур, Багахангай хамт) */
-  const UB_BOUNDS = L.latLngBounds([[47.15, 106.15], [48.45, 108.75]]);
+  /* Зөвхөн Чингэлтэй дүүргийн нутаг (хилийн хайрцаг + бага зай) */
+  const FOCUS_BOUNDS = L.latLngBounds([[47.895, 106.815], [48.155, 106.950]]);
 
   function init() {
     if (ready || !global.L) return;
     map = L.map('leaflet', {
-      center: [47.9185, 106.9175],
-      zoom: 12,
-      minZoom: 9,
-      maxBounds: UB_BOUNDS.pad(0.05),
+      center: [47.9300, 106.8890],
+      zoom: 13,
+      minZoom: 11,
+      maxBounds: FOCUS_BOUNDS.pad(0.06),
       maxBoundsViscosity: 0.9,
       zoomControl: true,
       preferCanvas: true
@@ -82,7 +82,7 @@
     $('mvMarkers').onclick = () => setMode('markers');
     $('mvHeat').onclick = () => setMode('heat');
     $('mvKhoroo').onclick = () => setMode('khoroo');
-    $('mvDistrict').onclick = () => setMode('district');
+    if ($('mvDistrict')) $('mvDistrict').onclick = () => setMode('district');
     $('mvFit').onclick = fit;
     $('mvExport').onclick = () => {
       global.CivicIO.exportAs('households-xlsx', rows);
@@ -99,6 +99,13 @@
       .then(r => r.json())
       .then(d => {
         BOUNDS = d.districts || null;
+        /* Чингэлтэйн албан хилийг байнгын хүрээ болгон харуулна */
+        if (BOUNDS && BOUNDS['Чингэлтэй']) {
+          L.polygon(BOUNDS['Чингэлтэй'], {
+            color: '#0e6bff', weight: 3, fill: false, dashArray: '8 6',
+            opacity: 0.85, interactive: false
+          }).addTo(map);
+        }
         if (BOUNDS && mode === 'district') refresh();
       })
       .catch(e => console.warn('Хилийн дата ачаалагдсангүй — таамаг хил ашиглана', e));
@@ -262,10 +269,8 @@
         if (!byDist.has(h.district)) byDist.set(h.district, []);
         byDist.get(h.district).push(h);
       });
-      /* Албан ёсны хилтэй бол бүх дүүргийг (дата байхгүйг нь ч) зурна */
-      const distNames = BOUNDS
-        ? Array.from(new Set(Object.keys(BOUNDS).concat(Array.from(byDist.keys()))))
-        : Array.from(byDist.keys());
+      /* Зөвхөн дата байгаа дүүргүүд (үндсэндээ Чингэлтэй) */
+      const distNames = Array.from(byDist.keys());
       distNames.forEach(function (name) {
         const list = byDist.get(name) || [];
         const col = distColor(name);

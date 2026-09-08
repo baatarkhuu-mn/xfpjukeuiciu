@@ -44,8 +44,9 @@
 
   function render(p) {
     const fn = {
-      dashboard: renderDashboard, households: renderHouseholds, citizens: renderCitizens,
-      programs: renderPrograms, issues: renderIssues, ai: renderAi, strategy: renderStrategy,
+      dashboard: renderDashboard, khoroos: renderKhoroos, households: renderHouseholds,
+      citizens: renderCitizens, programs: renderPrograms, issues: renderIssues,
+      ai: renderAi, strategy: renderStrategy,
       team: renderTeam, tasks: renderTasks, io: renderIo, settings: renderSettings
     }[p];
     if (fn) try { fn(); } catch (e) { console.error('render ' + p, e); toast('Дүрслэхэд алдаа: ' + e.message, 'err'); }
@@ -143,8 +144,11 @@
   function renderDashboard() {
     const st = S();
     const scope = $('dashScope').value;
-    if ($('dashScope').options.length <= 1) opts($('dashScope'), st.districts(), 'Бүх дүүрэг');
-    const rows = scope ? st.db.households.filter(h => h.district === scope) : st.db.households;
+    if ($('dashScope').options.length <= 1) {
+      opts($('dashScope'), st.khoroosOf(K().FOCUS).map(k => ({ v: k, t: k + '-р хороо' })), 'Бүх хороо');
+      $('dashScope').onchange = renderDashboard;
+    }
+    const rows = scope ? st.db.households.filter(h => +h.khoroo === +scope) : st.db.households;
     const s = st.stats(rows);
     const tr = st.trend(12);
 
@@ -174,7 +178,7 @@
       }),
       kpi({
         label: 'Шийдэгдээгүй гомдол', value: fmt(st.db.issues.filter(i => i.status !== 'Шийдэгдсэн' &&
-          (!scope || i.district === scope)).length), icon: '', color: '#b07d06',
+          (!scope || +i.khoroo === +scope)).length), icon: '', color: '#b07d06',
         tint: 'rgba(176,125,6,.2)', icbg: 'rgba(176,125,6,.14)',
         note: ''
       })
@@ -239,19 +243,19 @@
     })));
 
     $('dashBrief').innerHTML = '<ul class="advice" style="margin:0">' +
-      AI().briefing(rows, scope ? scope + ' дүүрэг' : 'Бүх тойрог')
+      AI().briefing(rows, scope ? scope + '-р хороо' : 'Чингэлтэй дүүрэг')
         .map((l, i) => '<li><span class="n">' + (i + 1) + '</span><span>' + md(l) + '</span></li>').join('') +
       '</ul>';
   }
 
   function renderDistBars() {
     const m = $('distMetric').value;
-    const rows = S().byDistrict();
+    const rows = S().byKhoroo().sort((a, b) => b[m] - a[m]).slice(0, 12);
     const lbl = {
       supportRate: v => pc(v), avgProb: v => pc(v), coverage: v => pc(v), households: v => fmt(v)
     }[m];
     $('distBars').innerHTML = C().hbars(rows.map(d => ({
-      name: d.name, value: d[m], label: lbl(d[m]),
+      name: d.khoroo + '-р хороо', value: d[m], label: lbl(d[m]),
       color: m === 'households' ? '#0e6bff' :
         d[m] > .6 ? '#0d8f63' : d[m] > .45 ? '#5cb85c' : d[m] > .3 ? '#b07d06' : '#e2701a'
     })));
@@ -260,6 +264,77 @@
   function initials(n) {
     return String(n || '?').replace(/[.\s]+/g, ' ').trim().split(' ')
       .map(w => w[0]).slice(0, 2).join('').toUpperCase();
+  }
+
+  /* ═══════════ 1a. ХОРООД ═══════════ */
+
+  function renderKhoroos() {
+    const st = S();
+    if (!$('khExport').dataset.f) {
+      $('khExport').dataset.f = '1';
+      $('khExport').onclick = () => { IO().exportAs('khoroos-xlsx'); toast('Excel татаж байна', 'ok'); };
+    }
+    const list = st.allKhoroos(K().FOCUS);
+    const IND = K().KH_INDICATORS;
+    $('khSub').textContent = 'Чингэлтэй дүүрэг · ' + list.length + ' хороо';
+    let html = '<thead><tr><th>Хороо</th><th class="num">Өрх</th><th class="num">Иргэн</th>' +
+      '<th>Дэмжлэг</th><th>Хамрагдалт</th>' +
+      IND.map(i => '<th class="num">' + i.n + '</th>').join('') +
+      '<th></th></tr></thead><tbody>';
+    list.forEach(function (kh) {
+      const rows = st.db.households.filter(h => h.district === kh.district && +h.khoroo === kh.khoroo);
+      const s = st.stats(rows);
+      const prof = st.khorooProfile(kh.district, kh.khoroo);
+      const ind = (prof && prof.ind) || {};
+      html += '<tr><td><b>' + kh.khoroo + '-р хороо</b>' +
+        (prof && prof.notes ? '<div style="font-size:11px;color:var(--text-mute)">' +
+          esc(prof.notes.slice(0, 48)) + '</div>' : '') + '</td>' +
+        '<td class="num">' + fmt(s.households) + '</td>' +
+        '<td class="num">' + fmt(s.people) + '</td>' +
+        '<td>' + (s.households ? '<b style="color:' + (s.supportRate > .5 ? 'var(--green)' : 'var(--text-dim)') +
+          '">' + pc(s.supportRate) + '</b>' : '—') + '</td>' +
+        '<td>' + (s.households ? '<div style="width:70px">' +
+          C().progress(s.coverage, s.coverage > .6 ? '#0d8f63' : '#0e6bff') + '</div>' : '—') + '</td>' +
+        IND.map(i => '<td class="num">' + (ind[i.k] != null && ind[i.k] !== '' ? fmt(ind[i.k]) :
+          '<span style="color:var(--text-mute)">—</span>') + '</td>').join('') +
+        '<td><div style="display:flex;gap:4px;justify-content:flex-end">' +
+        '<button class="btn sm khadd" data-k="' + kh.khoroo + '">+ Өрх</button>' +
+        '<button class="btn sm khed" data-k="' + kh.khoroo + '">Засах</button>' +
+        '<button class="btn sm khmap" data-k="' + kh.khoroo + '">Зураг</button>' +
+        '</div></td></tr>';
+    });
+    html += '</tbody>';
+    $('khTable').innerHTML = html;
+    $('khTable').querySelectorAll('.khed').forEach(b => b.onclick = () => khorooForm(+b.dataset.k));
+    $('khTable').querySelectorAll('.khadd').forEach(b => b.onclick = () =>
+      householdForm(null, { district: K().FOCUS, khoroo: +b.dataset.k }));
+    $('khTable').querySelectorAll('.khmap').forEach(b => b.onclick = () => {
+      go('map');
+      setTimeout(() => {
+        $('mapKhoroo').value = b.dataset.k;
+        $('mapKhoroo').dispatchEvent(new Event('change'));
+      }, 260);
+    });
+  }
+
+  function khorooForm(khoroo) {
+    const st = S();
+    const prof = st.khorooProfile(K().FOCUS, khoroo);
+    const ind = (prof && prof.ind) || {};
+    const IND = K().KH_INDICATORS;
+    openModal(khoroo + '-р хорооны мэдээлэл',
+      '<div class="fgrid">' +
+      IND.map(i => fld(i.n, 'i_' + i.k, ind[i.k], 'number')).join('') +
+      '</div>' + fld('Тэмдэглэл', 'notes', prof ? prof.notes : '', 'textarea'),
+      '<button class="btn" onclick="CivicUI.closeModal()">Болих</button>' +
+      '<button class="btn primary" id="khSave">Хадгалах</button>');
+    $('khSave').onclick = function () {
+      const d = formData();
+      const newInd = {};
+      IND.forEach(i => { newInd[i.k] = d['i_' + i.k] === '' ? '' : +d['i_' + i.k]; });
+      st.saveKhoroo(K().FOCUS, khoroo, { ind: newInd, notes: d.notes.trim() });
+      closeModal(); toast('Хадгалагдлаа', 'ok'); refresh();
+    };
   }
 
   /* ═══════════ 2. ӨРХИЙН БҮРТГЭЛ ═══════════ */
@@ -539,10 +614,12 @@
     return o;
   }
 
-  function householdForm(h) {
+  function householdForm(h, pre) {
     const st = S();
     const isNew = !h;
-    h = h || { district: st.districts()[0] || '', khoroo: 1, support: 0, family_size: 1, party: 'Тодорхойгүй' };
+    h = h || Object.assign(
+      { district: K().FOCUS, khoroo: 1, support: 0, family_size: 1, party: 'Тодорхойгүй' },
+      pre || {});
     const body =
       '<div class="fgrid">' +
       fld('Өрхийн код', 'code', h.code) +
@@ -598,11 +675,10 @@
       };
       if (!patch.head && !patch.code) return toast('Нэр эсвэл код оруулна уу', 'err');
       if (patch.lat == null || patch.lng == null || isNaN(patch.lat)) {
-        const d2 = K().DISTRICTS.find(x => x.name === patch.district) || K().DISTRICTS[0];
-        const rr = K().prng((patch.khoroo || 1) * 7919 + Date.now() % 9973);
-        const ang = rr() * Math.PI * 2, rad = Math.sqrt(rr()) * d2.r * 0.8;
-        patch.lat = +(d2.lat + Math.cos(ang) * rad * .62).toFixed(6);
-        patch.lng = +(d2.lng + Math.sin(ang) * rad).toFixed(6);
+        /* Координатгүй бол хороо + гудамжнаас автоматаар байршуулна */
+        const c = IO().autoLocate(patch.district, patch.khoroo, patch.street, Date.now() % 997);
+        patch.lat = c.lat;
+        patch.lng = c.lng;
       }
       if (isNew) { const nh = S().addHousehold(patch); toast('Өрх нэмэгдлээ', 'ok'); closeModal(); refresh(); openHousehold(nh.id); }
       else { S().updateHousehold(h.id, patch); toast('Хадгалагдлаа', 'ok'); closeModal(); refresh(); openHousehold(h.id); }
@@ -906,7 +982,7 @@
   function renderAi() {
     const st = S();
     if (!$('aiDist').dataset.f) {
-      opts($('aiDist'), st.districts(), 'Бүх дүүрэг');
+      opts($('aiDist'), st.khoroosOf(K().FOCUS).map(k => ({ v: k, t: k + '-р хороо' })), 'Бүх хороо');
       opts($('aiSeg'), [['core', 'Бат бөх дэмжигч'], ['lean', 'Хазайсан дэмжигч'], ['swing', 'Эргэлзэгч'],
       ['soft-opp', 'Хазайсан эсрэг'], ['opp', 'Эсрэг']].map(x => ({ v: x[0], t: x[1] })), 'Бүх ангилал');
       $('aiDist').dataset.f = '1';
@@ -919,7 +995,7 @@
   function drawAi() {
     const st = S();
     const dist = $('aiDist').value, seg = $('aiSeg').value;
-    let base = dist ? st.db.households.filter(h => h.district === dist) : st.db.households;
+    let base = dist ? st.db.households.filter(h => +h.khoroo === +dist) : st.db.households;
     let pr = AI().priority(base, 9999);
     if (seg) pr = pr.filter(p => p.s.segment.key === seg);
 
@@ -990,7 +1066,7 @@
   function renderStrategy() {
     const st = S();
     if (!$('stDist').dataset.f) {
-      opts($('stDist'), st.districts(), 'Бүх дүүрэг');
+
       $('stDist').dataset.f = '1';
       $('stDist').onchange = drawSt;
       $('stExport').onclick = () => { IO().exportAs('strategy-xlsx'); toast('Excel татаж байна', 'ok'); };

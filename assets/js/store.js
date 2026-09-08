@@ -28,25 +28,31 @@
   const ISSUE_CATS = ['Дэд бүтэц', 'Зам тээвэр', 'Эрүүл мэнд', 'Боловсрол', 'Ажил эрхлэлт',
     'Орон сууц', 'Нийгмийн халамж', 'Хог хаягдал', 'Ус, дулаан', 'Аюулгүй байдал', 'Бусад'];
 
-  /* Улаанбаатарын дүүрэг, хорооны тоо, ойролцоо төв цэг */
+  /* Систем зөвхөн Чингэлтэй дүүрэгт төвлөрнө (хэрэглэгчийн тойрог) */
+  const FOCUS = 'Чингэлтэй';
+
+  /* Чингэлтэй: 1–24-р хороо. Урд хэсэг (1–12) хот, хойд хэсэг (13–24) гэр хороолол */
   const DISTRICTS = [
-    { name: 'Баянзүрх', khoroo: 43, lat: 47.9235, lng: 106.9860, r: 0.055 },
-    { name: 'Сонгинохайрхан', khoroo: 43, lat: 47.9180, lng: 106.7830, r: 0.060 },
-    { name: 'Баянгол', khoroo: 25, lat: 47.9075, lng: 106.8460, r: 0.030 },
-    { name: 'Хан-Уул', khoroo: 25, lat: 47.8790, lng: 106.9130, r: 0.045 },
-    { name: 'Чингэлтэй', khoroo: 24, lat: 47.9410, lng: 106.9020, r: 0.038 },
-    { name: 'Сүхбаатар', khoroo: 20, lat: 47.9280, lng: 106.9270, r: 0.038 },
-    { name: 'Налайх', khoroo: 8, lat: 47.7720, lng: 107.2530, r: 0.030 },
-    { name: 'Багануур', khoroo: 5, lat: 47.8290, lng: 108.3420, r: 0.025 },
-    { name: 'Багахангай', khoroo: 2, lat: 47.3830, lng: 107.5290, r: 0.018 }
+    { name: 'Чингэлтэй', khoroo: 24, lat: 47.9330, lng: 106.8890, r: 0.030 }
   ];
+
+  /* Хороо тус бүрийн ойролцоо төв (хотын хэсэг урагшаа, гэр хороолол хойшоо) */
+  function khorooCenter(k) {
+    const urban = k <= 12;
+    const row = urban ? Math.floor((k - 1) / 4) : Math.floor((k - 13) / 4);
+    const col = (k - 1) % 4;
+    return {
+      lat: urban ? 47.9185 + row * 0.008 : 47.9500 + row * 0.022,
+      lng: 106.8600 + col * 0.018 + (urban ? 0 : 0.004)
+    };
+  }
 
   const STREETS = ['Энхтайваны өргөн чөлөө', 'Их тойруу', 'Чингисийн өргөн чөлөө', 'Сөүлийн гудамж',
     'Нарны зам', 'Тээвэрчдийн гудамж', 'Амарын гудамж', 'Бага тойруу', 'Их сургуулийн гудамж',
     'Жуковын гудамж', 'Гэсэр сүмийн гудамж', 'Дамбадаржаагийн зам', 'Токиогийн гудамж',
     'Оюутны гудамж', 'Үйлдвэрчний эвлэлийн гудамж', 'Хувьсгалчдын өргөн чөлөө', 'Ард Аюушийн өргөн чөлөө',
-    'Дунд гол', 'Мянган толгой', 'Хайлааст', 'Дэнжийн мянга', 'Шархад', 'Зайсангийн гудамж',
-    'Найрамдлын гудамж', 'Хоймор хороолол', 'Баянхошуу', 'Сэлбэ', 'Улиастай', 'Толгойт', 'Яармаг'];
+    'Дунд гол', 'Мянган толгой', 'Хайлааст', 'Дэнжийн мянга', 'Сурагчийн гудамж', 'Булагийн гудамж',
+    'Найрамдлын гудамж', 'Хоймор', 'Чингэлтэйн зам', 'Сэлбэ', 'Согоотын зам', 'Яргайтын гудамж', 'Тахилтын гудамж'];
 
   const SURNAMES = ['Батбаяр', 'Дорж', 'Гантулга', 'Мөнхбат', 'Отгонбаяр', 'Пүрэвдорж', 'Ганболд',
     'Цэрэндорж', 'Энхбаяр', 'Наранбаатар', 'Батсайхан', 'Ундрах', 'Лхагвасүрэн', 'Түмэнжаргал',
@@ -74,33 +80,43 @@
     viewer: { name: 'Ажиглагч', can: ['view'] }
   };
 
+  /* Хорооны үзүүлэлтүүд — багийн цуглуулдаг нийтлэг тоо баримт */
+  const KH_INDICATORS = [
+    { k: 'streets', n: 'Гудамж, хэсэг' },
+    { k: 'shops', n: 'Дэлгүүр' },
+    { k: 'sme', n: 'ЖДҮ' },
+    { k: 'wells', n: 'Худаг' },
+    { k: 'trees', n: 'Тарьсан мод' },
+    { k: 'members', n: 'Намын гишүүн' }
+  ];
+
   const TASK_STATUS = ['Хийгдэж буй', 'Хүлээгдэж буй', 'Шалгуулж буй', 'Дууссан'];
   const TASK_PRIO = ['Өндөр', 'Дунд', 'Бага'];
   const TASK_TAGS = ['Канвассинг', 'Судалгаа', 'Арга хэмжээ', 'Дата', 'Хөтөлбөр', 'Гомдол', 'Сургалт', 'Тайлан'];
 
   const STAFF_SEED = [
-    { name: 'Б.Ундрах', role: 'admin', phone: '99110022', team: 'Штаб' },
-    { name: 'Д.Мөнхбат', role: 'manager', phone: '99223344', team: 'Баянзүрх' },
-    { name: 'С.Оюунаа', role: 'manager', phone: '95556677', team: 'Сонгинохайрхан' },
-    { name: 'Т.Ганбаатар', role: 'canvasser', phone: '88112233', team: 'Баянгол' },
-    { name: 'Н.Энхжаргал', role: 'canvasser', phone: '94445566', team: 'Чингэлтэй' },
-    { name: 'Ц.Батмөнх', role: 'canvasser', phone: '91234567', team: 'Сүхбаатар' },
-    { name: 'Г.Сарантуяа', role: 'analyst', phone: '96667788', team: 'Штаб' },
-    { name: 'Э.Түвшинбаяр', role: 'canvasser', phone: '80099887', team: 'Хан-Уул' }
+    { name: 'Б.Ундрах', role: 'admin', phone: '99110022', team: 'Штаб', kh: [] },
+    { name: 'Д.Мөнхбат', role: 'manager', phone: '99223344', team: '1–6-р хороо', kh: [1, 2, 3, 4, 5, 6] },
+    { name: 'С.Оюунаа', role: 'manager', phone: '95556677', team: '7–12-р хороо', kh: [7, 8, 9, 10, 11, 12] },
+    { name: 'Т.Ганбаатар', role: 'canvasser', phone: '88112233', team: '13–16-р хороо', kh: [13, 14, 15, 16] },
+    { name: 'Н.Энхжаргал', role: 'canvasser', phone: '94445566', team: '17–20-р хороо', kh: [17, 18, 19, 20] },
+    { name: 'Ц.Батмөнх', role: 'canvasser', phone: '91234567', team: '21–24-р хороо', kh: [21, 22, 23, 24] },
+    { name: 'Г.Сарантуяа', role: 'analyst', phone: '96667788', team: 'Штаб', kh: [] },
+    { name: 'Э.Түвшинбаяр', role: 'canvasser', phone: '80099887', team: '1–6-р хороо', kh: [1, 2, 3, 4, 5, 6] }
   ];
 
   const TASK_SEED = [
-    { t: 'Баянзүрх 12-р хорооны дата шинэчлэлт', s: 'Хийгдэж буй', p: 'Өндөр', tag: 'Дата', pr: 65, due: 6 },
+    { t: '12-р хорооны дата шинэчлэлт', s: 'Хийгдэж буй', p: 'Өндөр', tag: 'Дата', pr: 65, due: 6 },
     { t: 'Эргэлзэгч өрхүүдтэй давтан уулзалт', s: 'Хийгдэж буй', p: 'Өндөр', tag: 'Канвассинг', pr: 40, due: 9 },
     { t: 'Ухуулагчдын 7 хоногийн тайлан', s: 'Хүлээгдэж буй', p: 'Дунд', tag: 'Тайлан', pr: 20, due: 3 },
-    { t: 'Сонгинохайрхан хэсгийн зураглал', s: 'Хийгдэж буй', p: 'Дунд', tag: 'Канвассинг', pr: 55, due: 14 },
+    { t: 'Хайлаастын хэсгийн зураглал', s: 'Хийгдэж буй', p: 'Дунд', tag: 'Канвассинг', pr: 55, due: 14 },
     { t: 'Ахмадын дэмжлэг хөтөлбөрийн бүртгэл', s: 'Шалгуулж буй', p: 'Дунд', tag: 'Хөтөлбөр', pr: 90, due: 2 },
     { t: 'Гомдол шийдвэрлэлтийн эргэх холбоо', s: 'Хүлээгдэж буй', p: 'Өндөр', tag: 'Гомдол', pr: 15, due: 5 },
     { t: 'Шинэ ухуулагчдын сургалт', s: 'Дууссан', p: 'Дунд', tag: 'Сургалт', pr: 100, due: -8 },
     { t: 'Судалгааны асуулга бэлтгэх', s: 'Шалгуулж буй', p: 'Бага', tag: 'Судалгаа', pr: 80, due: 4 },
-    { t: 'Хан-Уул 8-р хорооны арга хэмжээ', s: 'Хийгдэж буй', p: 'Өндөр', tag: 'Арга хэмжээ', pr: 30, due: 11 },
+    { t: '8-р хорооны арга хэмжээ', s: 'Хийгдэж буй', p: 'Өндөр', tag: 'Арга хэмжээ', pr: 30, due: 11 },
     { t: 'Дата цэвэрлэгээ — давхардал арилгах', s: 'Дууссан', p: 'Өндөр', tag: 'Дата', pr: 100, due: -14 },
-    { t: 'Чингэлтэй дүүргийн тойрог шинжилгээ', s: 'Хүлээгдэж буй', p: 'Дунд', tag: 'Тайлан', pr: 0, due: 18 },
+    { t: 'Тойргийн дэмжлэгийн шинжилгээ', s: 'Хүлээгдэж буй', p: 'Дунд', tag: 'Тайлан', pr: 0, due: 18 },
     { t: 'Оюутны тэтгэлгийн жагсаалт баталгаажуулах', s: 'Хийгдэж буй', p: 'Дунд', tag: 'Хөтөлбөр', pr: 45, due: 7 }
   ];
 
@@ -143,21 +159,18 @@
       description: p.name + ' — тойрогт хэрэгжүүлсэн хөтөлбөр'
     }));
 
-    // Хороо тус бүрд суурь дэмжлэгийн түвшин (өөр өөр)
+    // Чингэлтэйн 24 хороо тус бүрд суурь дэмжлэгийн түвшин (өөр өөр)
     const khoroos = [];
-    DISTRICTS.forEach(function (d, di) {
-      for (let k = 1; k <= d.khoroo; k++) {
-        const ang = r() * Math.PI * 2, rad = Math.sqrt(r()) * d.r;
-        khoroos.push({
-          district: d.name, khoroo: k,
-          lat: d.lat + Math.cos(ang) * rad * 0.62,
-          lng: d.lng + Math.sin(ang) * rad,
-          base: 0.28 + r() * 0.46,          // суурь дэмжлэгийн хандлага
-          weight: 0.4 + r(),                 // өрхийн нягтшил
-          di: di
-        });
-      }
-    });
+    for (let k = 1; k <= 24; k++) {
+      const c = khorooCenter(k);
+      khoroos.push({
+        district: FOCUS, khoroo: k,
+        lat: c.lat, lng: c.lng,
+        base: 0.28 + r() * 0.46,             // суурь дэмжлэгийн хандлага
+        weight: k <= 12 ? 0.9 + r() : 0.5 + r(), // хотын хороо нягт
+        urban: k <= 12
+      });
+    }
 
     const totalW = khoroos.reduce((s, k) => s + k.weight, 0);
     const households = [], citizens = [], interactions = [], issues = [];
@@ -167,10 +180,12 @@
       const n = Math.max(2, Math.round(nHouseholds * kh.weight / totalW));
       for (let i = 0; i < n; i++) {
         hIdx++;
-        const ang = r() * Math.PI * 2, rad = Math.sqrt(r()) * 0.011;
+        const ang = r() * Math.PI * 2, rad = Math.sqrt(r()) * 0.006;
         const lat = kh.lat + Math.cos(ang) * rad * 0.62;
         const lng = kh.lng + Math.sin(ang) * rad;
-        const housing = pick(r, HOUSING);
+        const housing = kh.urban
+          ? pick(r, ['Орон сууц', 'Орон сууц', 'Орон сууц', 'Түрээс', 'Албан байр'])
+          : pick(r, ['Хашаа байшин', 'Хашаа байшин', 'Гэр', 'Гэр', 'Хашаа байшин']);
         const fam = ri(r, 1, housing === 'Гэр' ? 7 : 6);
         const street = pick(r, STREETS);
         const surname = pick(r, SURNAMES);
@@ -299,13 +314,17 @@
       };
     });
 
-    /* Өрх бүрийг хариуцсан ухуулагчид хуваарилах */
-    const byTeam = {};
-    staff.forEach(s => { if (!byTeam[s.team]) byTeam[s.team] = []; byTeam[s.team].push(s); });
+    /* Өрх бүрийг хариуцсан хорооных нь ухуулагчид хуваарилах */
+    const byKh = {};
+    staff.forEach(function (s, i) {
+      (STAFF_SEED[i].kh || []).forEach(function (k) {
+        if (!byKh[k]) byKh[k] = [];
+        byKh[k].push(s);
+      });
+    });
+    const fallbackPool = staff.filter(s => s.role === 'canvasser' || s.role === 'manager');
     households.forEach(function (h, i) {
-      const pool = byTeam[h.district] && byTeam[h.district].length
-        ? byTeam[h.district]
-        : staff.filter(s => s.role === 'canvasser' || s.role === 'manager');
+      const pool = byKh[h.khoroo] && byKh[h.khoroo].length ? byKh[h.khoroo] : fallbackPool;
       h.assigned_to = pool[i % pool.length].id;
     });
 
@@ -343,8 +362,8 @@
   const LS_CFG = 'civicos.cfg.v1';
 
   const Store = {
-    TABLES: ['households', 'citizens', 'programs', 'interactions', 'issues', 'staff', 'tasks'],
-    db: { households: [], citizens: [], programs: [], interactions: [], issues: [], staff: [], tasks: [] },
+    TABLES: ['households', 'citizens', 'programs', 'interactions', 'issues', 'staff', 'tasks', 'khoroos'],
+    db: { households: [], citizens: [], programs: [], interactions: [], issues: [], staff: [], tasks: [], khoroos: [] },
     cfg: { sbUrl: '', sbKey: '', seeded: false, demo: true },
     sb: null,
     user: null,
@@ -361,6 +380,21 @@
       if (!this.db.households || !this.db.households.length) {
         this.db = generateSeed(1400);
         this.cfg.seeded = true;
+        this.cfg.seedVer = 2;
+        this.saveCfg();
+        this.persist();
+      } else if (this.cfg.seedVer !== 2) {
+        /* Хуучин 9 дүүргийн жишээ датаг Чингэлтэйн шинэ жишээгээр солино.
+           Демо гэдгийг: импортын түүхгүй + seed-ийн ID хэв маягтай (hh_00001)
+           эсэхээр таньдаг — бодит импортолсон датаг хэзээ ч хөндөхгүй. */
+        let imports = [];
+        try { imports = JSON.parse(localStorage.getItem('civicos.imports') || '[]'); } catch (e) { }
+        const demo = !imports.length && this.db.households.length > 0 &&
+          /^hh_\d{5}$/.test(this.db.households[0].id);
+        if (demo) this.db = generateSeed(1400);
+        this.cfg.seedVer = 2;
+        this.cfg.seeded = demo;
+        this.saveCfg();
         this.persist();
       }
       this.normalize();
@@ -590,6 +624,43 @@
       };
     },
 
+    /* --- CRUD: khoroos (хорооны профайл) --- */
+    khorooProfile(district, khoroo) {
+      return this.db.khoroos.find(k => k.district === district && +k.khoroo === +khoroo) || null;
+    },
+    saveKhoroo(district, khoroo, patch) {
+      let k = this.khorooProfile(district, khoroo);
+      if (!k) {
+        k = { id: uid('kh'), district: district, khoroo: +khoroo, ind: {}, notes: '' };
+        this.db.khoroos.push(k);
+      }
+      if (patch.ind) k.ind = Object.assign({}, k.ind, patch.ind);
+      if (patch.notes !== undefined) k.notes = patch.notes;
+      k.updated_at = today();
+      this.persist();
+      return k;
+    },
+
+    /* Бүх хороо: өрхийн дата + профайлыг нэгтгэсэн жагсаалт */
+    allKhoroos(district) {
+      const set = new Map();
+      /* Чингэлтэйн 1–24-р хороо үргэлж бүрэн жагсана */
+      if (!district || district === FOCUS) {
+        for (let k = 1; k <= 24; k++) set.set(FOCUS + '|' + k, { district: FOCUS, khoroo: k });
+      }
+      this.db.households.forEach(h => {
+        if (district && h.district !== district) return;
+        if (!h.district || !h.khoroo) return;
+        set.set(h.district + '|' + h.khoroo, { district: h.district, khoroo: +h.khoroo });
+      });
+      this.db.khoroos.forEach(k => {
+        if (district && k.district !== district) return;
+        set.set(k.district + '|' + k.khoroo, { district: k.district, khoroo: +k.khoroo });
+      });
+      return Array.from(set.values()).sort((a, b) =>
+        a.district.localeCompare(b.district, 'mn') || a.khoroo - b.khoroo);
+    },
+
     /* --- эрх шалгах --- */
     can(action) {
       const r = ROLES[this.role] || ROLES.viewer;
@@ -742,6 +813,9 @@
     },
     reseed(n) {
       this.db = generateSeed(n || 1400);
+      this.cfg.seeded = true;
+      this.cfg.seedVer = 2;
+      this.saveCfg();
       this.persist();
     },
     clearAll() {
@@ -787,7 +861,7 @@
   global.CivicConst = {
     SUPPORT, PARTIES, HOUSING, INCOME, EDU, CONTACT_TYPES, ISSUE_CATS,
     DISTRICTS, STREETS, PROGRAM_SEED, ROLES, TASK_STATUS, TASK_PRIO, TASK_TAGS,
-    uid, today, daysAgo, prng
+    KH_INDICATORS, FOCUS, uid, today, daysAgo, prng
   };
 
 })(window);
